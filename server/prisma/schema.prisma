@@ -1,0 +1,87 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+enum TaskStatus {
+    TODO
+    IN_PROGRESS
+    DONE
+}
+
+enum TaskPriority {
+    LOW
+    MEDIUM
+    HIGH
+}
+
+model User {
+    id       String @id @default(uuid())
+    name     String
+    email    String @unique
+    password String
+
+    isVerified Boolean @default(true)
+    isActive   Boolean @default(true)
+
+    lastLoginAt       DateTime?
+    passwordChangedAt DateTime?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    tasks Task[]
+
+    sessions Session[]
+
+    @@index([email])
+    @@index([isActive])
+}
+
+model Task {
+    id          String       @id @default(uuid())
+    title       String
+    description String?
+    category    String       @default("general")
+    priority    TaskPriority @default(MEDIUM)
+    status      TaskStatus   @default(TODO)
+    dueDate     DateTime?
+
+    ownerId String
+    owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([ownerId])
+    @@index([status])
+    @@index([priority])
+    @@index([dueDate])
+    @@index([category])
+}
+
+model Session {
+    id           String    @id @default(uuid())
+    userId       String
+    user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    refreshToken String
+    expiresAt    DateTime
+    revokedAt    DateTime?
+    userAgent    String?
+
+    createdAt DateTime @default(now())
+
+    @@index([userId])
+    @@index([expiresAt])
+    @@index([refreshToken])
+}
+
+model BlacklistedToken {
+    id        String   @id @default(uuid())
+    jti       String   @unique
+    expiresAt DateTime
+}
