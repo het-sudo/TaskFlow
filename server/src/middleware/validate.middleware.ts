@@ -1,33 +1,60 @@
 import { Request, Response, NextFunction } from "express"
-import { ZodSchema, ZodError } from "zod"
+
+import { ZodError, ZodSchema } from "zod"
+
 import { StatusCodes } from "http-status-codes"
+
 import logger from "../utils/logger.js"
 
+type ValidationSchemas = {
+  body?: ZodSchema
+
+  query?: ZodSchema
+
+  params?: ZodSchema
+}
+
 export const validate =
-  (schema: ZodSchema) =>
+  (schemas: ValidationSchemas) =>
   (req: Request, res: Response, next: NextFunction): void => {
     try {
-      req.body = schema.parse(req.body)
+      req.validated = {}
+
+      if (schemas.body) {
+        req.validated.body = schemas.body.parse(req.body)
+      }
+
+      if (schemas.query) {
+        req.validated.query = schemas.query.parse(req.query)
+      }
+
+      if (schemas.params) {
+        req.validated.params = schemas.params.parse(req.params)
+      }
+
       next()
     } catch (error) {
       if (error instanceof ZodError) {
-        logger.error(" validation error in middleware", {
+        logger.error("validation error in middleware", {
           errors: error.issues,
-          body: req.body,
         })
-        const formattedErrors = error.flatten().fieldErrors
 
         res.status(StatusCodes.BAD_REQUEST).json({
           success: false,
+
           message: error.issues[0]?.message,
-          errors: formattedErrors,
+
+          errors: error.flatten().fieldErrors,
         })
+
         return
       }
 
-      //   logger.error("unknown error occured", err)
+      logger.error("unknown validation error", error)
+
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         success: false,
+
         message: "Internal server error",
       })
     }

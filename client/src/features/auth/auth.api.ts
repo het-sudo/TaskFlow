@@ -1,36 +1,33 @@
 import { api } from "@/shared/axios"
+import { request } from "@/shared/apiClient"
+
 import type { LoginInput, RegisterInput } from "./auth.schema"
-import type { ApiResponse, AuthData, AuthResponse, User } from "@/shared/types"
 
-//api handling functions
+import type { AuthData, User } from "@/shared/types"
 
-export async function loginRequest(data: LoginInput): Promise<AuthResponse> {
-  const response = await api.post<ApiResponse<AuthData>>("/auth/login", data)
+export async function loginRequest(data: LoginInput) {
+  const result = await request<AuthData>(api.post("/auth/login", data))
 
   return {
-    user: response.data.data.user,
-
-    accessToken: response.data.data.auth.accessToken,
+    user: result.user,
+    accessToken: result.auth.accessToken,
   }
 }
-export async function registerRequest(data: RegisterInput) {
-  const response = await api.post<AuthResponse>("/auth/register", data)
 
-  return response.data
+export async function registerRequest(data: RegisterInput) {
+  return request<User>(api.post("/auth/register", data))
 }
 
 export async function getMeRequest() {
-  const response = await api.get<ApiResponse<User>>("/auth/me")
-
-  return response.data.data
+  return request<User>(api.get("/auth/me"))
 }
-export async function refreshRequest(): Promise<AuthResponse> {
-  const response = await api.post<ApiResponse<AuthData>>("/auth/refresh-token")
+
+export async function refreshRequest() {
+  const result = await request<AuthData>(api.post("/auth/refresh-token"))
 
   return {
-    user: response.data.data.user,
-
-    accessToken: response.data.data.auth.accessToken,
+    user: result.user,
+    accessToken: result.auth.accessToken,
   }
 }
 

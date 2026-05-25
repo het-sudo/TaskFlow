@@ -11,7 +11,7 @@ import {
   registerUser,
 } from "./service.js"
 import { env } from "../../config/env.js"
-import { JwtPayload } from "./validator.js"
+import { JwtPayload, LoginInput, RegisterInput } from "./validator.js"
 import jwt from "jsonwebtoken"
 import ApiError from "../../utils/apiError.js"
 import prisma from "../../lib/prisma.js"
@@ -22,7 +22,7 @@ export const register = asyncHandler(async (req, res) => {
   logger.info("register request received", { email: req.body?.email })
 
   // create a new user in database using request body data
-  const user = await registerUser(req.body)
+  const user = await registerUser(req.validated.body as RegisterInput)
 
   // log successful user creation for monitoring/debugging
   logger.info("user created sucessfully", { userId: user.id })
@@ -40,7 +40,9 @@ export const login = asyncHandler(async (req, res) => {
   logger.info("login request received", { email: req.body?.email })
 
   // validate credentials and generate access + refresh tokens
-  const { user, accessToken, refreshToken } = await loginUser(req.body)
+  const { user, accessToken, refreshToken } = await loginUser(
+    req.validated.body as LoginInput
+  )
 
   logger.info("user logged IN sucessfully", { userId: user.id })
 
@@ -104,8 +106,8 @@ export const logout = asyncHandler(async (req, res) => {
 export const refreshToken = asyncHandler(async (req, res) => {
   logger.info("refresh token request received")
 
-  // get refresh token from cookie or request body fallback
-  const refreshToken = req.cookies.refreshToken || req.body.refreshToken
+  // get refresh token from cookie
+  const refreshToken = req.cookies.refreshToken
 
   // if no refresh token exists, deny access
   if (!refreshToken) {

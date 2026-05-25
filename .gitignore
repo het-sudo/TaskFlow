@@ -17,5 +17,6 @@ coverage
 README.md
 
 logs
-server/prisma/migrations/**/migration_lock.toml
+# server/prisma/migrations/**/migration_lock.toml
+server/prisma/migrations/
 demo.txt

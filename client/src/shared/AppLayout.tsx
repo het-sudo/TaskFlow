@@ -1,22 +1,22 @@
-import { useAuth } from "@/features/auth/useAuth"
+import { useState } from "react"
 import { Outlet } from "react-router-dom"
+import AppHeader from "./components/AppHeader"
+import AppSidebar from "./components/AppSidebar"
 
 export function AppLayout() {
-  const { logout } = useAuth()
+  const [openSidebar, setOpenSidebar] = useState(true)
+
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#F9FAFB] text-red-400">
+      <AppHeader onMenuClick={() => setOpenSidebar((prev) => !prev)} />
+
       <div className="flex">
-        <aside className="w-64 border-r border-slate-200 bg-white p-6">
-          <h2 className="text-xl font-bold text-violet-600">TaskFlow</h2>
-        </aside>
-        <button
-          onClick={logout}
-          className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700"
-        >
-          Logout
-        </button>
-        <main className="flex-1 p-6">
-          <Outlet />
+        <AppSidebar open={openSidebar} onClose={() => setOpenSidebar(false)} />
+        {/* min-h-[calc(100vh-72px)] flex-1 overflow-x-hidden p-4 md:p-8  */}
+        <main className="min-h-[calc(100vh-72px)] flex-1 p-4 md:p-8">
+          <div className="mx-auto w-full max-w-7xl">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

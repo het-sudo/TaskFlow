@@ -1,23 +1,28 @@
-import axios, { type InternalAxiosRequestConfig } from "axios"
+import axios, {
+  AxiosError,
+  type InternalAxiosRequestConfig,
+  type AxiosResponse,
+} from "axios"
 
 import { getAccessToken, removeAccessToken, setAccessToken } from "./token"
+
 import { refreshRequest } from "@/features/auth/auth.api"
 
-type RetryRequestConfig = InternalAxiosRequestConfig & {
+type RetryConfig = InternalAxiosRequestConfig & {
   _retry?: boolean
 }
-//interceptors for handling the token request
+
+let refreshPromise: Promise<string> | null = null
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:9000/api/v1/",
-
   withCredentials: true,
 })
 
-api.interceptors.request.use((config) => {
+api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = getAccessToken()
 
-  if (token) {
+  if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`
   }
 
@@ -25,10 +30,10 @@ api.interceptors.request.use((config) => {
 })
 
 api.interceptors.response.use(
-  (response) => response,
+  (response: AxiosResponse) => response,
 
-  async (error) => {
-    const originalRequest = error.config as RetryRequestConfig
+  async (error: AxiosError) => {
+    const originalRequest = error.config as RetryConfig
 
     const status = error.response?.status
 
@@ -36,19 +41,36 @@ api.interceptors.response.use(
       "/auth/refresh-token"
     )
 
-    if (status === 401 && !originalRequest._retry && !isRefreshRequest) {
+    if (isRefreshRequest) {
+      return Promise.reject(error)
+    }
+
+    if (status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
 
       try {
-        const response = await refreshRequest()
+        if (!refreshPromise) {
+          refreshPromise = refreshRequest()
+            .then((res) => {
+              setAccessToken(res.accessToken)
+              return res.accessToken
+            })
+            .finally(() => {
+              refreshPromise = null
+            })
+        }
 
-        setAccessToken(response.accessToken)
+        const newToken = await refreshPromise
 
-        originalRequest.headers.Authorization = `Bearer ${response.accessToken}`
+        if (originalRequest.headers) {
+          originalRequest.headers.Authorization = `Bearer ${newToken}`
+        }
 
         return api(originalRequest)
-      } catch {
+      } catch (err) {
         removeAccessToken()
+        refreshPromise = null
+        return Promise.reject(err)
       }
     }
 

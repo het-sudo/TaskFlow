@@ -39,6 +39,8 @@ export function useAuth() {
 
       setUser(response)
     } catch {
+      removeAccessToken()
+      //check above
       clearUser()
     } finally {
       setLoading(false)
@@ -48,6 +50,7 @@ export function useAuth() {
   async function login(data: LoginInput) {
     try {
       const response = await loginRequest(data)
+      removeAccessToken()
       setAccessToken(response.accessToken)
       setUser(response.user)
 
@@ -63,13 +66,11 @@ export function useAuth() {
 
   async function register(data: RegisterInput) {
     try {
-      const response = await registerRequest(data)
-
-      setUser(response.user)
+      await registerRequest(data)
 
       toast.success("Account created")
 
-      navigate(ROUTES.DASHBOARD) // make changes if want user to login after register
+      navigate(ROUTES.LOGIN)
     } catch (error) {
       const axiosError = error as AxiosError<ApiErrorResponse>
 
@@ -80,9 +81,8 @@ export function useAuth() {
     try {
       await logoutRequest()
     } finally {
-      removeAccessToken()
-
       clearUser()
+      removeAccessToken()
 
       navigate(ROUTES.LOGIN)
     }

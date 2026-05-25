@@ -34,12 +34,11 @@ model User {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    tasks Task[]
+    sessions   Session[]
+    ownedTasks Task[]
 
-    sessions Session[]
-
-    @@index([email])
-    @@index([isActive])
+    sharedTasks       TaskShare[]
+    createdTaskShares TaskShare[] @relation("TaskSharedBy")
 }
 
 model Task {
@@ -54,14 +53,34 @@ model Task {
     ownerId String
     owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt DateTime    @default(now())
+    updatedAt DateTime    @updatedAt
+    deletedAt DateTime?
+    shares    TaskShare[]
 
+    @@index([deletedAt])
     @@index([ownerId])
-    @@index([status])
-    @@index([priority])
-    @@index([dueDate])
-    @@index([category])
+    @@index([ownerId, status])
+    @@index([ownerId, priority])
+    @@index([ownerId, category])
+}
+
+model TaskShare {
+    id String @id @default(uuid())
+
+    taskId String
+    task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+    sharedWithId String
+    sharedWith   User   @relation(fields: [sharedWithId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+
+    sharedById String
+    sharedBy   User   @relation("TaskSharedBy", fields: [sharedById], references: [id], onDelete: Cascade)
+
+    @@unique([taskId, sharedWithId])
+    @@index([sharedWithId])
 }
 
 model Session {
