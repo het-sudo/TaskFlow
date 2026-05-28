@@ -12,9 +12,10 @@ import { ROUTES } from "@/shared/constants"
 import Dashboard from "@/components/Dashboard"
 import NotFoundPage from "@/components/NotFoundPage"
 import { PublicLayout } from "@/shared/PublicLayout"
-import DashboardPage from "@/features/task/pages/DashboardPage"
 import TaskDetail from "@/features/task/pages/TaskDetail"
-import SharedTask from "@/features/task/pages/SharedTask"
+import SharedTasksPage from "@/features/shareTask/pages/ShareTaskPage"
+import DashboardPage from "@/features/dashboard/pages/DashboardPage"
+import TaskPage from "@/features/task/pages/TaskPage"
 
 // App router for routes
 export function AppRouter() {
@@ -35,11 +36,11 @@ export function AppRouter() {
         <Route element={<AppLayout />}>
           <Route path={ROUTES.DASHBOARD} element={<DashboardPage />} />
 
-          <Route path="/tasks" element={<DashboardPage />} />
+          <Route path="/tasks" element={<TaskPage />} />
 
           <Route path="/tasks/:id" element={<TaskDetail />} />
 
-          <Route path="/shared" element={<SharedTask />} />
+          <Route path="/shared" element={<SharedTasksPage />} />
         </Route>
       </Route>
 

@@ -12,7 +12,7 @@ export function AppLayout() {
 
       <div className="flex">
         <AppSidebar open={openSidebar} onClose={() => setOpenSidebar(false)} />
-        {/* min-h-[calc(100vh-72px)] flex-1 overflow-x-hidden p-4 md:p-8  */}
+
         <main className="min-h-[calc(100vh-72px)] flex-1 p-4 md:p-8">
           <div className="mx-auto w-full max-w-7xl">
             <Outlet />

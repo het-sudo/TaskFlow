@@ -16,15 +16,18 @@ import { Button } from "@/shared/resusable/Button"
 
 import { FileText, Tag, Calendar, Trash2, Save } from "lucide-react"
 
-import { useTasksModule } from "../useTask"
+import { useTask } from "../useTask"
+import { useNavigate } from "react-router-dom"
 
 interface Props {
   taskId: string
-  tasks: ReturnType<typeof useTasksModule>
+  tasks: ReturnType<typeof useTask>
 }
 
 export default function EditTaskForm({ taskId, tasks }: Props) {
   const { selectedTask, updateTask, deleteTask } = tasks
+
+  const navigate = useNavigate()
 
   const {
     register,
@@ -56,7 +59,7 @@ export default function EditTaskForm({ taskId, tasks }: Props) {
         : undefined,
     })
 
-    window.history.back()
+    navigate("/tasks")
   }
 
   async function handleDelete() {
@@ -64,7 +67,7 @@ export default function EditTaskForm({ taskId, tasks }: Props) {
     if (!confirmed) return
 
     await deleteTask(taskId)
-    window.history.back()
+    navigate("/tasks")
   }
 
   return (

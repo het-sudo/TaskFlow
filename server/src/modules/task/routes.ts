@@ -3,14 +3,17 @@ import { Router } from "express"
 import {
   createTask,
   deleteTask,
+  getSharedTasks,
   getTaskById,
   getTaskCategories,
   getTasks,
+  shareTask,
   updateTask,
 } from "./controller.js"
 
 import {
   createTaskSchema,
+  shareTaskSchema,
   taskFiltersSchema,
   taskIdSchema,
   updateTaskSchema,
@@ -44,6 +47,18 @@ router.get(
 
 router.get("/categories", authMiddleware, getTaskCategories)
 
+router.get("/shared-with-me", authMiddleware, getSharedTasks)
+
+router.post(
+  "/:id/share",
+  authMiddleware,
+  validate({
+    params: taskIdSchema,
+    body: shareTaskSchema,
+  }),
+  shareTask
+)
+
 router.get(
   "/:id",
   authMiddleware,
@@ -75,5 +90,5 @@ router.delete(
 
 export const taskRoute: IRoute = {
   path: "/tasks",
-  router,
+  router: router,
 }

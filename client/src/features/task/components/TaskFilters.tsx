@@ -64,7 +64,7 @@ export default function TaskFilters({
     } else if (key === "priority") {
       normalized = isPriority(value) ? value : undefined
     } else {
-      normalized = value || undefined
+      normalized = value.trim() ? value : undefined
     }
 
     const updated: TaskFiltersInput = {
@@ -93,7 +93,7 @@ export default function TaskFilters({
       </div>
 
       <Select
-        value={filters.status || ""}
+        value={filters.status ?? ""}
         onChange={(e) => handleFilterChange("status", e.target.value)}
         options={[
           { label: "All Status", value: "" },
@@ -105,7 +105,7 @@ export default function TaskFilters({
       />
 
       <Select
-        value={filters.priority || ""}
+        value={filters.priority ?? ""}
         onChange={(e) => handleFilterChange("priority", e.target.value)}
         options={[
           { label: "All Priority", value: "" },

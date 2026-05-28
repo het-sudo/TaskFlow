@@ -10,8 +10,10 @@ import {
   createTaskService,
   deleteTaskService,
   getCategories,
+  getSharedTasksService,
   getTaskByIdService,
   getTasksService,
+  shareTaskService,
   updateTaskService,
 } from "./service.js"
 
@@ -22,6 +24,8 @@ import {
   TaskIdInput,
   UpdateTaskInput,
 } from "./validator.js"
+
+import { getIO } from "../../socket/index.js"
 
 export const createTask = asyncHandler(
   async (req: AuthRequest, res: Response) => {
@@ -170,6 +174,45 @@ export const getTaskCategories = asyncHandler(
       StatusCodes.OK,
       "Task categories fetched successfully",
       categories
+    )
+  }
+)
+
+export const shareTask = asyncHandler(async (req: AuthRequest, res) => {
+  const ownerId = req.user?.userId
+
+  if (!ownerId) {
+    throw new ApiError(StatusCodes.UNAUTHORIZED, "Unauthorized")
+  }
+
+  const taskId = req.params.id as string
+  const { email } = req.body
+
+  const { notification, sharedWithId } = await shareTaskService(
+    ownerId,
+    taskId,
+    email
+  )
+
+  return sendResponse(res, StatusCodes.OK, "Task shared successfully", {
+    notificationId: notification.id,
+    sharedWithId,
+  })
+})
+
+export const getSharedTasks = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    logger.info("get shared tasks request received", {
+      userId: req.user?.userId,
+    })
+
+    const tasks = await getSharedTasksService(req.user!.userId)
+
+    return sendResponse(
+      res,
+      StatusCodes.OK,
+      "Shared tasks fetched successfully",
+      tasks
     )
   }
 )

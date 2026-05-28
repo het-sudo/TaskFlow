@@ -1,18 +1,22 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { MoveLeft } from "lucide-react"
 
 import EditTaskForm from "./EditTaskForm"
 import { AppLoader } from "@/shared/AppLoader"
 
-import { useTasksModule } from "../useTask"
+import { useTask } from "../useTask"
+import { Button } from "@/shared/resusable/Button"
+import ShareTaskModal from "../../shareTask/components/ShareTaskModal"
 
 export default function TaskDetail() {
   const { id } = useParams()
 
-  const tasks = useTasksModule()
+  const tasks = useTask()
 
   const { selectedTask, getTaskById, isLoading } = tasks
+
+  const [openShare, setOpenShare] = useState(false)
 
   useEffect(() => {
     if (id) {
@@ -51,7 +55,9 @@ export default function TaskDetail() {
           <h1 className="text-3xl font-bold text-slate-900">
             {selectedTask.title}
           </h1>
-
+          <div className="mt-2 flex gap-2">
+            <Button onClick={() => setOpenShare(true)}>Share Task</Button>
+          </div>
           <p className="mt-1 text-sm text-slate-500">
             Manage and update your task.
           </p>
@@ -60,6 +66,12 @@ export default function TaskDetail() {
 
       {/* EDIT FORM */}
       <EditTaskForm taskId={id!} tasks={tasks} />
+      {openShare && (
+        <ShareTaskModal
+          taskId={selectedTask.id}
+          onClose={() => setOpenShare(false)}
+        />
+      )}
     </div>
   )
 }

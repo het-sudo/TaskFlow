@@ -32,6 +32,10 @@ export const taskIdSchema = z.object({
   id: z.string().uuid(),
 })
 
+export const shareTaskSchema = z.object({
+  email: z.string().email("Invalid Email Address"),
+})
+
 export type CreateTaskInput = z.infer<typeof createTaskSchema>
 
 export type UpdateTaskInput = z.infer<typeof updateTaskSchema>
@@ -39,6 +43,8 @@ export type UpdateTaskInput = z.infer<typeof updateTaskSchema>
 export type TaskFiltersInput = z.infer<typeof taskFiltersSchema>
 
 export type TaskIdInput = z.infer<typeof taskIdSchema>
+
+export type shareTaskInput = z.infer<typeof shareTaskSchema>
 
 function isFutureDate(date: string) {
   const inputDate = new Date(date)

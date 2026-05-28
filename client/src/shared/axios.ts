@@ -7,7 +7,6 @@ import axios, {
 import { getAccessToken, removeAccessToken, setAccessToken } from "./token"
 
 import { refreshRequest } from "@/features/auth/auth.api"
-
 type RetryConfig = InternalAxiosRequestConfig & {
   _retry?: boolean
 }
@@ -53,6 +52,7 @@ api.interceptors.response.use(
           refreshPromise = refreshRequest()
             .then((res) => {
               setAccessToken(res.accessToken)
+
               return res.accessToken
             })
             .finally(() => {

@@ -44,6 +44,8 @@ export interface Task {
   dueDate?: string | null
   createdAt: string
   updatedAt: string
+  isOverdue?: boolean
+  sharedBy?: string
 }
 
 export interface TasksResponse {

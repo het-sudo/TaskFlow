@@ -17,13 +17,13 @@ import {
   deleteTaskRequest,
   getCategoriesRequest,
 } from "./task.api"
-import type { AxiosError } from "axios"
-import type { ApiErrorResponse } from "@/shared/types"
+import { getErrorMessage } from "@/libs/getErrorMessage"
 
-export function useTasksModule() {
+export function useTask() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [categories, setCategories] = useState<string[]>([])
+  const [error, setError] = useState<string | null>(null)
 
   const [filters, setFiltersState] = useState<TaskFiltersInput>({
     page: 1,
@@ -45,16 +45,13 @@ export function useTasksModule() {
       const res = await getCategoriesRequest()
       setCategories(res)
     } catch (error) {
-      const axiosError = error as AxiosError<ApiErrorResponse>
-
-      toast.error(
-        axiosError.response?.data?.message || "failed to fetch categories"
-      )
+      toast.error(getErrorMessage(error))
     }
   }, [])
 
   const fetchTasks = useCallback(
     async (next?: Partial<TaskFiltersInput>) => {
+      setError(null)
       setIsLoading(true)
 
       try {
@@ -66,11 +63,7 @@ export function useTasksModule() {
         setPagination(res.pagination)
         setFiltersState(merged)
       } catch (error) {
-        const axiosError = error as AxiosError<ApiErrorResponse>
-
-        toast.error(
-          axiosError.response?.data?.message || "failed to fetch task"
-        )
+        toast.error(getErrorMessage(error))
       } finally {
         setIsLoading(false)
       }
@@ -79,15 +72,14 @@ export function useTasksModule() {
   )
 
   const getTaskById = useCallback(async (id: string) => {
+    setError(null)
     setIsLoading(true)
 
     try {
       const task = await getTaskByIdRequest(id)
       setSelectedTask(task)
     } catch (error) {
-      const axiosError = error as AxiosError<ApiErrorResponse>
-
-      toast.error(axiosError.response?.data?.message || " failed to get task")
+      toast.error(getErrorMessage(error))
     } finally {
       setIsLoading(false)
     }
@@ -96,6 +88,7 @@ export function useTasksModule() {
   // ---------------- CREATE ----------------
   const createTask = useCallback(
     async (payload: CreateTaskInput) => {
+      setError(null)
       setIsSubmitting(true)
 
       try {
@@ -103,11 +96,7 @@ export function useTasksModule() {
         toast.success("Task Created Successfully")
         await Promise.all([fetchTasks(), fetchCategories()])
       } catch (error) {
-        const axiosError = error as AxiosError<ApiErrorResponse>
-
-        toast.error(
-          axiosError.response?.data?.message || "failed to create task"
-        )
+        toast.error(getErrorMessage(error))
       } finally {
         setIsSubmitting(false)
       }
@@ -117,6 +106,7 @@ export function useTasksModule() {
 
   const updateTask = useCallback(
     async (id: string, payload: UpdateTaskInput) => {
+      setError(null)
       setIsSubmitting(true)
 
       try {
@@ -128,9 +118,7 @@ export function useTasksModule() {
 
         await fetchTasks()
       } catch (error) {
-        const axiosError = error as AxiosError<ApiErrorResponse>
-
-        toast.error(axiosError.response?.data?.message || "failed to update")
+        toast.error(getErrorMessage(error))
       } finally {
         setIsSubmitting(false)
       }
@@ -140,6 +128,7 @@ export function useTasksModule() {
 
   const deleteTask = useCallback(
     async (id: string) => {
+      setError(null)
       setIsSubmitting(true)
 
       try {
@@ -149,9 +138,7 @@ export function useTasksModule() {
 
         await Promise.all([fetchTasks(), fetchCategories()])
       } catch (error) {
-        const axiosError = error as AxiosError<ApiErrorResponse>
-
-        toast.error(axiosError.response?.data?.message || "failed to delete")
+        toast.error(getErrorMessage(error))
       } finally {
         setIsSubmitting(false)
       }
@@ -166,11 +153,16 @@ export function useTasksModule() {
     }))
   }, [])
 
+  const retryFetchTasks = useCallback(() => {
+    return fetchTasks(filters)
+  }, [fetchTasks, filters])
+
   return {
     tasks,
     selectedTask,
     categories,
     filters,
+    error,
     pagination,
     isLoading,
     isSubmitting,
@@ -181,5 +173,6 @@ export function useTasksModule() {
     deleteTask,
     fetchCategories,
     setFilters,
+    retryFetchTasks,
   }
 }

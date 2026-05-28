@@ -1,6 +1,7 @@
-import { Bell, Menu } from "lucide-react"
+import { Menu } from "lucide-react"
 
 import UserDropdown from "./UserDropdown"
+import NotificationBell from "@/features/notification/components/NotificationBell"
 
 interface Props {
   onMenuClick: () => void
@@ -30,7 +31,7 @@ export default function AppHeader({ onMenuClick }: Props) {
 
       <div className="flex items-center gap-2 md:gap-3">
         <button className="flex h-10 w-10 items-center justify-center rounded-xl transition hover:bg-slate-100">
-          <Bell className="h-5 w-5 text-slate-600" />
+          <NotificationBell />
         </button>
 
         <UserDropdown />

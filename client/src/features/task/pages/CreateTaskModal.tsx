@@ -24,12 +24,12 @@ import { Select } from "@/shared/resusable/Select"
 import { Button } from "@/shared/resusable/Button"
 import { Modal } from "@/shared/resusable/Modal"
 
-import { useTasksModule } from "../useTask"
+import { useTask } from "../useTask"
 
 interface Props {
   open: boolean
   onClose: () => void
-  tasks: ReturnType<typeof useTasksModule>
+  tasks: ReturnType<typeof useTask>
 }
 
 export default function CreateTaskModal({ open, onClose, tasks }: Props) {
@@ -67,7 +67,7 @@ export default function CreateTaskModal({ open, onClose, tasks }: Props) {
 
   return (
     <Modal open={open} onClose={handleClose} size="md">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex items-center justify-between ">
         <div>
           <h2 className="flex items-center gap-2 text-2xl font-bold text-slate-900">
             <PlusCircle className="h-5 w-5 text-red-400" />
@@ -110,6 +110,7 @@ export default function CreateTaskModal({ open, onClose, tasks }: Props) {
 
           <Textarea
             rows={5}
+            placeholder="Enter Your Description"
             error={errors.description?.message}
             {...register("description")}
           />

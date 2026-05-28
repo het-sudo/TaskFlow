@@ -1,9 +1,13 @@
-import { PrismaClient, type Prisma } from "@prisma/client"
+import { Prisma, PrismaClient } from "@prisma/client"
 import {
   CreateTaskInput,
   TaskFiltersInput,
   UpdateTaskInput,
+  shareTaskInput,
 } from "./validator.js"
+import ApiError from "../../utils/apiError.js"
+import { StatusCodes } from "http-status-codes"
+import { emitNotification } from "../../socket/event.js"
 
 const prisma = new PrismaClient()
 
@@ -80,9 +84,16 @@ export async function getTasksService(
       where,
     }),
   ])
+  const now = new Date()
+
+  const tasksWithOverdue = tasks.map((task) => ({
+    ...task,
+    isOverdue:
+      task.status !== "DONE" && !!task.dueDate && new Date(task.dueDate) < now,
+  }))
 
   return {
-    tasks,
+    tasks: tasksWithOverdue,
 
     pagination: {
       page,
@@ -166,4 +177,120 @@ export async function getCategories(ownerId: string) {
     },
   })
   return categories.map((item) => item.category)
+}
+
+export async function shareTaskService(
+  ownerId: string,
+  taskId: string,
+  email: string
+) {
+  const result = await prisma.$transaction(async (tx) => {
+    const task = await tx.task.findFirst({
+      where: {
+        id: taskId,
+        ownerId,
+        deletedAt: null,
+      },
+      include: {
+        owner: {
+          select: {
+            email: true,
+            name: true,
+          },
+        },
+      },
+    })
+
+    if (!task) {
+      throw new ApiError(StatusCodes.NOT_FOUND, "Task not found")
+    }
+
+    const sharedWith = await tx.user.findUnique({
+      where: { email },
+    })
+
+    if (!sharedWith) {
+      throw new ApiError(StatusCodes.NOT_FOUND, "User not found")
+    }
+
+    if (sharedWith.id === ownerId) {
+      throw new ApiError(
+        StatusCodes.BAD_REQUEST,
+        "You cannot share task with yourself"
+      )
+    }
+
+    const existingShare = await tx.taskShare.findUnique({
+      where: {
+        taskId_sharedWithId: {
+          taskId,
+          sharedWithId: sharedWith.id,
+        },
+      },
+    })
+
+    if (existingShare) {
+      throw new ApiError(
+        StatusCodes.BAD_REQUEST,
+        "Task already shared with this user"
+      )
+    }
+
+    await tx.taskShare.create({
+      data: {
+        taskId,
+        sharedWithId: sharedWith.id,
+        sharedById: ownerId,
+      },
+    })
+
+    const notification = await tx.notification.create({
+      data: {
+        userId: sharedWith.id,
+        taskId,
+        type: "TASK_SHARED",
+        message: `Task "${task.title}" was shared with you by ${task.owner.email}`,
+      },
+    })
+
+    return {
+      sharedWithId: sharedWith.id,
+      notification,
+    }
+  })
+
+  emitNotification(result.sharedWithId, result.notification)
+
+  return result
+}
+
+export async function getSharedTasksService(userId: string) {
+  const sharedTasks = await prisma.taskShare.findMany({
+    where: {
+      sharedWithId: userId,
+      task: {
+        deletedAt: null,
+      },
+    },
+
+    orderBy: {
+      createdAt: "desc",
+    },
+
+    include: {
+      task: {
+        include: {
+          owner: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      },
+    },
+  })
+
+  return sharedTasks
 }

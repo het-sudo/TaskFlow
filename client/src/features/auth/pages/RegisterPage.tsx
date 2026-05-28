@@ -40,8 +40,8 @@ export function RegisterPage() {
 
       <form className="space-y-5" onSubmit={handleSubmit(registerUser)}>
         <Input
-          label="Name"
-          placeholder="Enter your name"
+          label="Full Name"
+          placeholder="Enter your Full Name"
           className="pl-10"
           error={errors.name?.message}
           leftIcon={<User className="h-5 w-5" />}

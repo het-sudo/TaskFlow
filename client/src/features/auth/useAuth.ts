@@ -1,4 +1,3 @@
-import { AxiosError } from "axios"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import {
@@ -9,7 +8,7 @@ import {
 } from "./auth.api"
 import { useAuthStore } from "./auth.store"
 import type { LoginInput, RegisterInput } from "./auth.schema"
-import type { ApiErrorResponse } from "@/shared/types"
+
 import { ROUTES } from "@/shared/constants"
 import {
   setAccessToken,
@@ -17,12 +16,13 @@ import {
   getAccessToken,
 } from "@/shared/token"
 import { useCallback } from "react"
+import { connectSocket, disconnectSocket } from "@/libs/socket"
+import { getErrorMessage } from "@/libs/getErrorMessage"
 
 //hook for all api operations
 
 export function useAuth() {
   const navigate = useNavigate()
-
   const { setUser, clearUser, setLoading } = useAuthStore()
 
   const initializeAuth = useCallback(async () => {
@@ -40,7 +40,7 @@ export function useAuth() {
       setUser(response)
     } catch {
       removeAccessToken()
-      //check above
+
       clearUser()
     } finally {
       setLoading(false)
@@ -50,17 +50,17 @@ export function useAuth() {
   async function login(data: LoginInput) {
     try {
       const response = await loginRequest(data)
+      const token = response.accessToken
       removeAccessToken()
-      setAccessToken(response.accessToken)
+      setAccessToken(token)
       setUser(response.user)
-
+      disconnectSocket()
+      connectSocket(token)
       toast.success("Login successful")
 
       navigate(ROUTES.DASHBOARD)
     } catch (error) {
-      const axiosError = error as AxiosError<ApiErrorResponse>
-
-      toast.error(axiosError.response?.data?.message || "Login failed")
+      toast.error(getErrorMessage(error))
     }
   }
 
@@ -72,9 +72,7 @@ export function useAuth() {
 
       navigate(ROUTES.LOGIN)
     } catch (error) {
-      const axiosError = error as AxiosError<ApiErrorResponse>
-
-      toast.error(axiosError.response?.data?.message || "Registration failed")
+      toast.error(getErrorMessage(error))
     }
   }
   async function logout() {
@@ -83,7 +81,7 @@ export function useAuth() {
     } finally {
       clearUser()
       removeAccessToken()
-
+      disconnectSocket()
       navigate(ROUTES.LOGIN)
     }
   }

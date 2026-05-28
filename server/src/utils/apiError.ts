@@ -10,5 +10,3 @@ class ApiError extends Error {
 }
 
 export default ApiError
-
-// res.status(StatusCodes.OK).send(ReasonPhrases.OK); // 200 OK

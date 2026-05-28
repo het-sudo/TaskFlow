@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom"
 
-import { CheckSquare, Users, X } from "lucide-react"
+import { CheckSquare, Users, X, LayoutDashboard } from "lucide-react"
 
 interface Props {
   open: boolean
@@ -9,6 +9,12 @@ interface Props {
 }
 
 const navigation = [
+  {
+    label: "Dashboard",
+    path: "/dashboard",
+
+    icon: LayoutDashboard,
+  },
   {
     label: "My Tasks",
     path: "/tasks",

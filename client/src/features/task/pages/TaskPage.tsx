@@ -5,13 +5,13 @@ import TaskList from "../components/TaskList"
 import CreateTaskModal from "./CreateTaskModal"
 import Pagination from "../components/Pagination"
 
-import { useTasksModule } from "../useTask"
+import { useTask } from "../useTask"
 
 import { Button } from "@/shared/resusable/Button"
 import { AppLoader } from "@/shared/AppLoader"
 
-export default function DashboardPage() {
-  const tasksModule = useTasksModule()
+export default function TaskPage() {
+  const tasksModule = useTask()
 
   const {
     tasks,
@@ -21,6 +21,7 @@ export default function DashboardPage() {
     pagination,
     filters,
     setFilters,
+    retryFetchTasks,
   } = tasksModule
 
   const [openCreateModal, setOpenCreateModal] = useState(false)
@@ -65,6 +66,12 @@ export default function DashboardPage() {
         {isLoading ? (
           <div className="rounded-3xl border p-10 text-center">
             <AppLoader />
+            <button
+              onClick={retryFetchTasks}
+              className="mt-4 rounded-lg bg-violet-500 px-4 py-2 text-white"
+            >
+              Retry
+            </button>
           </div>
         ) : (
           <>
