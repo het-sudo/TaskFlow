@@ -1,327 +1,408 @@
-# 🚀 TaskFlow
-
-A full-stack task management system with real-time collaboration, task sharing, and live notifications powered by Socket.io.
-
-TaskFlow is designed as a **scalable, modular, production-ready system** with offline-safe notifications, real-time updates, and a clean feature-based architecture.
-
+🚀 TaskFlow
+ 
+🔥 A modern full-stack task management platform designed for efficient collaboration, task tracking, and productivity.
+ 
+Built with modern web technologies using scalable architecture, authentication, protected routes, and clean backend practices.
+ 
 ---
-
+ 
 # ✨ Features
-
-- Secure JWT authentication with refresh token sessions
-- Protected routes with ownership validation
-- Full CRUD for tasks
-- Advanced filtering (status, priority, category)
-- Task sharing between users (many-to-many system)
-- Real-time notifications using Socket.io
-- Offline-safe notification persistence (DB-backed)
-- Unread notification tracking system
-- Mark notifications as read
-- Dashboard analytics API
-- Soft delete support (safe data recovery)
-- Modular feature-based backend architecture
-- Strong request validation using Zod
-
+ 
+## 🔐 Authentication & Authorization
+ 
+ *🔑 JWT-based authentication*
+ 🛡️ Secure protected routes
+ *👤 User session handling*
+ 🔒 Password hashing & validation
+ 
 ---
-
-# 🧠 Tech Stack
-
-## Frontend
-
-- React
-- TypeScript
-- Vite
-- Tailwind CSS
-- React Router
-- Axios
-- React Hook Form
-- Zod
-- Socket.io Client
-
-## Backend
-
-- Node.js + Express
-- TypeScript
-- PostgreSQL
-- Prisma ORM
-- JWT Authentication
-- Socket.io
-- Zod Validation
-- Helmet Security Middleware
-
+ 
+## 📋 Task Management
+ 
+ *➕ Create tasks*
+ ✏️ Update tasks
+ *🗑️ Delete tasks*
+ 📌 Mark tasks as completed/incomplete
+ *📂 Organize tasks efficiently*
+ 
 ---
-
-# 📁 Project Structure
-
-taskflow/
-│
-├── client/
-│ ├── src/
-│ │ ├── components/
-│ │ ├── routes/
-│ │ ├── shared/
-│ │ ├── libs/
-│ │ ├── styles/
-│ │ └── features/
-│ ├── public/
-│ ├── package.json
-│ └── .env
-│
-├── server/
-│ ├── prisma/
-│ ├── src/
-│ │ ├── modules/
-│ │ ├── middleware/
-│ │ ├── config/
-│ │ ├── sockets/
-│ │ ├── utils/
-│ │ ├── routes/
-│ │ └── types/
-│ ├── package.json
-│ └── .env
-│
-└── README.md
-
+ 
+## 👥 User Features
+ 
+ 👤 User-specific task management
+ *📊 Personalized dashboard*
+ 🔍 Task filtering & searching
+ *📅 Task tracking workflow*
+ 
 ---
-
-# 🧩 Backend Architecture Pattern
-
-Each feature module follows:
-
-module/
-├── routes
-├── controller
-├── service
-├── validation
-└── types
-
-### Why this architecture?
-
-- Feature isolation
-- Easy scaling
-- Independent debugging
-- Clean separation of business logic
-
+ 
+# 🏗️ Backend Architecture
+ 
+ 🧩 Layered architecture
+ *📋 Validation layer*
+ ⚠️ Centralized error handling
+ *📦 Reusable API response structure*
+ 🛢️ Database ORM integration
+ *🧱 Modular route structure*
+ 
 ---
-
-# 🗄️ Database Schema Overview (Prisma)
-
-## 👤 User
-
-- Authentication entity
-- Owns tasks
-- Receives notifications
-- Maintains sessions
-
-## 📌 Task
-
-- Core business entity
-- Status, priority, category support
-- Belongs to a user
-- Can be shared
-
-## 🤝 TaskShare
-
-- Many-to-many relation (users ↔ tasks)
-- Tracks sharedBy + sharedWith
-- Prevents duplicate sharing
-
-## 🔔 Notification
-
-- Persistent event storage
-- Supports read/unread state
-
-## 🔐 Session
-
-- Refresh token system
-- Secure session control
-
+ 
+# 🎨 Frontend Architecture
+ 
+ ⚛️ React + TypeScript
+ *🎨 TailwindCSS*
+ ♻️ Reusable components
+ *🚧 Protected routes*
+ 🌐 API service layer
+ *📱 Responsive UI*
+ 
 ---
-
-# ⚡ API OVERVIEW
-
-## Auth
-
-- POST `/auth/register`
-- POST `/auth/login`
-- POST `/auth/logout`
-- POST `/auth/refresh-token`
-- GET `/auth/me`
-
-## Tasks
-
-- GET `/tasks`
-- POST `/tasks`
-- GET `/tasks/:id`
-- PUT `/tasks/:id`
-- DELETE `/tasks/:id`
-- POST `/tasks/:id/share`
-- GET `/tasks/categories`
-- GET `/tasks/shared-with-me`
-- GET `/tasks/shared-with-me/categories`
-
-## Notifications
-
-- GET `/notifications`
-- PATCH `/notifications/:id/read`
-
-## Dashboard
-
-- GET `/dashboard/stats`
-
+ 
+# 🛠️ Tech Stack
+ 
+## 💻 Frontend
+ 
+ ⚛️ React
+ *📘 TypeScript*
+ 🎨 TailwindCSS
+ *🌍 React Router DOM*
+ 📡 Axios
+ 
 ---
-
-# 🔌 REAL-TIME SYSTEM (Socket.io)
-
-## Events
-
-- notification:new
-- notification:read
-- task:shared
-
+ 
+## 🖥️ Backend
+ 
+ *🟢 Node.js*
+ 🚂 Express.js
+ *📘 TypeScript*
+ 🛢️ Database ORM
+ *🔐 JWT Authentication*
+ 📋 Validation Middleware
+ 
 ---
-
-# 🔔 Notification Flow (IMPORTANT)
-
-- Online user → receives toast instantly
-- Offline user → stored in DB only
-- On login → fetch DB notifications, update badge only (NO toasts replay)
-- After login → only new events trigger toasts
-
----
-
-# 🧠 NOTABLE DESIGN DECISIONS
-
-## Prisma ORM
-
-- Type-safe DB access
-- Strong migrations
-- Reduces runtime SQL errors
-
-## PostgreSQL
-
-- Reliable relational database
-- Great for task + sharing relationships
-
-## TaskShare Table
-
-- Handles many-to-many relations
-- Stores metadata (sharedBy, timestamps)
-
-## Notification in DB
-
-- Enables offline support
-- Multi-device sync
-- Persistent history
-
-## No toast replay on login
-
-- Prevents spam UX
-- Separates history vs live events
-
-## Modular backend
-
-- Feature isolation
-- Easy scaling
-
-## Session table
-
-- Refresh token rotation
-
-## Zod validation
-
-- Strong input validation
-- Cleaner controllers
-
----
-
-# 🚀 UNIQUE SYSTEM HIGHLIGHTS
-
-- Hybrid real-time + offline notification system
-- Event-driven Socket architecture
-- Scalable modular backend design
-- Indexed PostgreSQL schema
-- Clean separation of business logic
-
----
-
-# 🔮 FUTURE ENHANCEMENTS
-
-## Real-time
-
-- Redis Socket scaling
-- Room-based collaboration
-- Live presence indicators
-
-## Product
-
-- Task comments (threaded)
-- File uploads (S3 / Cloudinary)
-- Drag & drop Kanban
-- Recurring tasks
-
-## Notifications
-
-- Email + push notifications
-- Smart grouping
-- Priority-based alerts
-
-## AI
-
-- Smart task prioritization
-- Auto categorization
-- Task summarizer
-
-## Security
-
-- Role-based access control
-- Audit logs
-- Device management
-
-## DevOps
-
-- Docker setup
-- CI/CD pipeline
-- Production scaling
-
----
-
-# 🛡️ SECURITY PRACTICES
-
-- JWT authentication
-- Password hashing (bcrypt)
-- Zod validation
-- Environment variables protection
-
----
-
-# ⚙️ SETUP INSTRUCTIONS
-
-## Clone
-
+ 
+# 📂 Project Structure
+ 
+## 🎨 Frontend
+ 
 ```bash
-git clone <repo-url>
-cd taskflow
+src/
+├── components/
+├── pages/
+├── routes/
+├── services/
+├── hooks/
+├── utils/
+├── types/
+└── layouts/
 ```
+ 
+---
+ 
+## 🖥️ Backend
+ 
+```bash
+src/
+├── config/
+├── controllers/
+├── middlewares/
+├── modules/
+├── routes/
+├── services/
+├── utils/
+├── validations/
+└── database/
+```
+ 
+---
+ 
+# 🗄️ Database Schema
+ 
 
-Backend
-cd server
+---
+
+## 🔢 Enums
+
+| Enum Name        | Values                  |
+| ---------------- | ----------------------- |
+| NotificationType | TASK_SHARED             |
+| TaskStatus       | TODO, IN_PROGRESS, DONE |
+| TaskPriority     | LOW, MEDIUM, HIGH       |
+
+---
+
+## 👤 User Model
+
+| Field       | Type          | Description            |
+| ----------- | ------------- | ---------------------- |
+| id          | String (UUID) | Primary key            |
+| name        | String        | User name              |
+| email       | String        | Unique email           |
+| password    | String        | Hashed password        |
+| lastLoginAt | DateTime?     | Last login timestamp   |
+| createdAt   | DateTime      | Account creation time  |
+| updatedAt   | DateTime      | Auto-updated timestamp |
+
+### Relations
+
+* sessions → Session[]
+* ownedTasks → Task[]
+* sharedTasks → TaskShare[]
+* createdTaskShares → TaskShare (TaskSharedBy relation)
+* notifications → Notification[]
+
+---
+
+## 📌 Task Model
+
+| Field       | Type          | Description               |
+| ----------- | ------------- | ------------------------- |
+| id          | String (UUID) | Primary key               |
+| title       | String        | Task title                |
+| description | String?       | Optional description      |
+| category    | String        | Default: "general"        |
+| priority    | TaskPriority  | LOW / MEDIUM / HIGH       |
+| status      | TaskStatus    | TODO / IN_PROGRESS / DONE |
+| dueDate     | DateTime?     | Optional deadline         |
+| ownerId     | String        | Foreign key (User)        |
+| createdAt   | DateTime      | Created timestamp         |
+| updatedAt   | DateTime      | Auto-updated timestamp    |
+| deletedAt   | DateTime?     | Soft delete support       |
+
+### Indexes
+
+* ownerId
+* ownerId + status
+* ownerId + priority
+* ownerId + category
+* deletedAt
+
+---
+
+## 🔗 TaskShare Model
+
+| Field        | Type          | Description                |
+| ------------ | ------------- | -------------------------- |
+| id           | String (UUID) | Primary key                |
+| taskId       | String        | Related task               |
+| sharedWithId | String        | User receiving shared task |
+| sharedById   | String        | User who shared            |
+| createdAt    | DateTime      | Share timestamp            |
+
+### Constraints
+
+* UNIQUE(taskId, sharedWithId)
+
+---
+
+## 🔔 Notification Model
+
+| Field     | Type             | Description          |
+| --------- | ---------------- | -------------------- |
+| id        | String (UUID)    | Primary key          |
+| userId    | String           | Recipient user       |
+| taskId    | String?          | Related task         |
+| type      | NotificationType | Notification type    |
+| message   | String           | Notification message |
+| isRead    | Boolean          | Default: false       |
+| createdAt | DateTime         | Timestamp            |
+
+### Indexes
+
+* userId + isRead
+* createdAt
+
+---
+
+## 🔐 Session Model
+
+| Field        | Type          | Description        |
+| ------------ | ------------- | ------------------ |
+| id           | String (UUID) | Primary key        |
+| userId       | String        | Related user       |
+| refreshToken | String        | Auth refresh token |
+| expiresAt    | DateTime      | Expiry time        |
+| revokedAt    | DateTime?     | Revoked timestamp  |
+| createdAt    | DateTime      | Created timestamp  |
+
+### Indexes
+
+* userId
+* expiresAt
+* refreshToken
+
+---
+ 
+---
+ 
+# 📋 Core Functionalities
+ 
+| Feature                | Status |
+| ---------------------- | ------ |
+| 🔐 Authentication      | ✅      |
+| 📋 Task CRUD           | ✅      |
+| 👤 User Dashboard      | ✅      |
+| 🚧 Protected Routes    | ✅      |
+| 📱 Responsive UI       | ✅      |
+| ⚠️ Error Handling      | ✅      |
+| 📦 Reusable Components | ✅      |
+ 
+---
+ 
+# 🌐 API Routes
+ 
+## 🔐 Auth Routes
+ 
+```http
+POST /auth/register
+POST /auth/login
+POST /auth/logout
+```
+ 
+---
+ 
+## 📋 Task Routes
+ 
+```http
+GET    /tasks
+GET    /tasks/:id
+POST   /tasks
+PUT    /tasks/:id
+DELETE /tasks/:id
+```
+ 
+---
+ 
+# 🔑 Environment Variables
+ 
+Create a `.env` file in backend root.
+ 
+```env
+PORT=5000
+
+DATABASE_URL=your_database_url
+
+JWT_SECRET_KEY=your_secret_key
+
+CLIENT_URL=http://localhost:5173
+```
+ 
+---
+ 
+# 🚀 Installation
+ 
+## 📥 Clone Repository
+ 
+```bash
+git clone https://github.com/het-sudo/TaskFlow.git
+```
+ 
+---
+ 
+## 🖥️ Backend Setup
+ 
+```bash
+cd backend
+
 pnpm install
-pnpm prisma generate
-pnpm prisma migrate dev
+
 pnpm dev
+```
+ 
+---
+ 
+## 🎨 Frontend Setup
+ 
+```bash
+cd frontend
 
-Backend runs at:
-http://localhost:9000
-
-Frontend
-cd client
 pnpm install
+
 pnpm dev
+```
+ 
+---
+ 
+# 📜 Scripts
+ 
+## 🖥️ Backend
+ 
+```bash
+pnpm dev
+pnpm build
+```
+ 
+---
+ 
+## 🎨 Frontend
+ 
+```bash
+pnpm dev
+pnpm build
+pnpm preview
+```
+ 
+---
+ 
+# 🛡️ Security Features
+ 
+ *🔒 Password hashing*
+ 🔑 JWT verification
+ *🚧 Protected APIs*
+ 👮 Authorization middleware
+ *📋 Request validation*
+ ⚠️ Centralized error handling
+ 
+---
+ 
+# ⚠️ Error Handling
+ 
+The application includes:
+ 
+ *📌 Standardized API responses*
+ ❌ Validation handling
+ *⚠️ Centralized error middleware*
+ ✅ Proper HTTP status codes
+ 
+---
+ 
+# 🚀 Future Improvements
+ 
+ *📅 Due dates & reminders*
+ 👥 Team collaboration
+ *📊 Analytics dashboard*
+ 🏷️ Task labels & priorities
+ *🔔 Notifications*
+ 🌙 Dark mode support
+ 
+---
+ 
+# 🌿 Git Workflow
+ 
+This project follows:
+ 
+ *🌱 Feature branch workflow*
+ ✍️ Meaningful commits
+ *🔀 Pull request-based development*
+ 
+---
+ 
+# 📚 Learning Outcomes
+ 
+This project helped practice:
+ 
+ 🏗️ Scalable architecture
+ *🔐 Authentication systems*
+ 📋 CRUD operations
+ *⚛️ React + TypeScript development*
+ 🛢️ Database integration
+* 🛡️ Secure backend development
+ 
+---
+ 
+# 👨‍💻 Author
+ 
+Developed by **Het** 🚀
+ 
+---
 
-Frontend runs at:
-http://localhost:5173
-
-👨‍💻 AUTHOR
-
-HET PATEL
