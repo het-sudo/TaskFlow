@@ -30,9 +30,7 @@ export default function AppHeader({ onMenuClick }: Props) {
       </div>
 
       <div className="flex items-center gap-2 md:gap-3">
-        <button className="flex h-10 w-10 items-center justify-center rounded-xl transition hover:bg-slate-100">
-          <NotificationBell />
-        </button>
+        <NotificationBell />
 
         <UserDropdown />
       </div>

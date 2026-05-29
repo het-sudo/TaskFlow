@@ -4,7 +4,9 @@ import axios, {
   type AxiosResponse,
 } from "axios"
 
+import { getApiBaseUrl } from "./apiConfig"
 import { getAccessToken, removeAccessToken, setAccessToken } from "./token"
+import { reconnectSocket } from "@/libs/socket"
 
 import { refreshRequest } from "@/features/auth/auth.api"
 type RetryConfig = InternalAxiosRequestConfig & {
@@ -14,7 +16,7 @@ type RetryConfig = InternalAxiosRequestConfig & {
 let refreshPromise: Promise<string> | null = null
 
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:9000/api/v1/",
+  baseURL: getApiBaseUrl(),
   withCredentials: true,
 })
 
@@ -43,8 +45,14 @@ api.interceptors.response.use(
     if (isRefreshRequest) {
       return Promise.reject(error)
     }
+    const url = originalRequest.url || ""
 
-    if (status === 401 && !originalRequest._retry) {
+    const isAuthRoute =
+      url.includes("/auth/login") ||
+      url.includes("/auth/register") ||
+      url.includes("/auth/refresh-token")
+
+    if (status === 401 && !originalRequest._retry && !isAuthRoute) {
       originalRequest._retry = true
 
       try {
@@ -52,6 +60,7 @@ api.interceptors.response.use(
           refreshPromise = refreshRequest()
             .then((res) => {
               setAccessToken(res.accessToken)
+              reconnectSocket(res.accessToken)
 
               return res.accessToken
             })

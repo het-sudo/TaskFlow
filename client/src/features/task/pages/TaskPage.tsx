@@ -9,6 +9,7 @@ import { useTask } from "../useTask"
 
 import { Button } from "@/shared/resusable/Button"
 import { AppLoader } from "@/shared/AppLoader"
+import { PlusCircle } from "lucide-react"
 
 export default function TaskPage() {
   const tasksModule = useTask()
@@ -16,6 +17,7 @@ export default function TaskPage() {
   const {
     tasks,
     isLoading,
+    error,
     fetchTasks,
     fetchCategories,
     pagination,
@@ -46,13 +48,19 @@ export default function TaskPage() {
   return (
     <>
       <div className="space-y-6">
-        <div className="flex justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-3xl font-bold">My Tasks</h1>
+            <h1 className="text-2xl font-bold sm:text-3xl">My Tasks</h1>
             <p className="text-sm text-slate-600">Organize and manage work</p>
           </div>
 
-          <Button onClick={() => setOpenCreateModal(true)}>Create Task</Button>
+          <Button
+            onClick={() => setOpenCreateModal(true)}
+            className="w-full shrink-0 sm:w-auto"
+          >
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Create Task
+          </Button>
         </div>
         <div
           className="
@@ -63,15 +71,16 @@ export default function TaskPage() {
         >
           <TaskFilters {...tasksModule} />
         </div>
-        {isLoading ? (
+        {tasks.length === 0 && isLoading ? (
           <div className="rounded-3xl border p-10 text-center">
-            <AppLoader />
-            <button
-              onClick={retryFetchTasks}
-              className="mt-4 rounded-lg bg-violet-500 px-4 py-2 text-white"
-            >
+            <AppLoader inline />
+          </div>
+        ) : tasks.length === 0 && error ? (
+          <div className="rounded-3xl border p-10 text-center">
+            <p className="text-sm text-red-600">{error}</p>
+            <Button type="button" onClick={retryFetchTasks}>
               Retry
-            </button>
+            </Button>
           </div>
         ) : (
           <>

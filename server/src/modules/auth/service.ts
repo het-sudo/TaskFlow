@@ -10,6 +10,7 @@ import {
   generateJti,
   generateRefreshToken,
   hashPassword,
+  hashToken,
   redisKeys,
 } from "./utils.js"
 import { JwtPayload, LoginInput, RegisterInput } from "./validator.js"
@@ -105,10 +106,7 @@ export const loginUser = async (payload: LoginInput) => {
   const refreshToken = generateRefreshToken()
 
   // hash refresh token before storing in DB for security
-  const hashedRefreshToken = crypto
-    .createHash("sha256")
-    .update(refreshToken)
-    .digest("hex")
+  const hashedRefreshToken = hashToken(refreshToken)
 
   logger.info("revoking previous active sessions", { userId: user.id })
 
@@ -199,10 +197,7 @@ export const refreshTokenService = async (refreshToken: string) => {
   logger.info("refreshTokenService called")
 
   // Hash incoming refresh token
-  const hashedToken = crypto
-    .createHash("sha256")
-    .update(refreshToken)
-    .digest("hex")
+  const hashedToken = hashToken(refreshToken)
 
   // Find session INCLUDING revoked sessions
   // Needed for refresh token reuse detection
@@ -281,10 +276,7 @@ export const refreshTokenService = async (refreshToken: string) => {
   const newRefreshToken = generateRefreshToken()
 
   // Hash new refresh token before storing
-  const hashedNewToken = crypto
-    .createHash("sha256")
-    .update(newRefreshToken)
-    .digest("hex")
+  const hashedNewToken = hashToken(newRefreshToken)
 
   logger.info("rotating refresh token", { userId: session.userId })
 

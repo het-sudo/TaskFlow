@@ -44,10 +44,9 @@ export default function AppSidebar({
       )}
 
       <aside
-        className={`fixed left-0 top-[72px] z-50  flex h-[calc(100dvh-72px)] w-72 flex-col border-r border-slate-200 bg-[#fcfaf8] p-5 transition-transform duration-300 md:sticky md:top-[72px] md:z-0 md:translate-x-0
-
-    ${open ? "translate-x-0" : "-translate-x-full"}
-  `}
+        className={`fixed left-0 top-[72px] z-50 flex h-[calc(100dvh-72px)] w-72 flex-col border-r border-slate-200 bg-[#fcfaf8] p-5 transition-transform duration-300 ease-in-out ${
+          open ? "translate-x-0" : "-translate-x-full"
+        }`}
       >
         <div className="mb-6 flex items-center justify-between md:hidden">
           <h2 className="text-lg font-semibold text-slate-900">Menu</h2>
@@ -68,7 +67,11 @@ export default function AppSidebar({
               <NavLink
                 key={item.path}
                 to={item.path}
-                onClick={onClose}
+                onClick={() => {
+                  if (window.matchMedia("(max-width: 767px)").matches) {
+                    onClose()
+                  }
+                }}
                 className={({ isActive }) =>
                   `
                     flex items-center gap-3 rounded-2xl px-4 py-3

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
-import { MoveLeft } from "lucide-react"
+import { CornerDownLeft, Share2 } from "lucide-react"
 
 import EditTaskForm from "./EditTaskForm"
 import { AppLoader } from "@/shared/AppLoader"
@@ -14,7 +14,7 @@ export default function TaskDetail() {
 
   const tasks = useTask()
 
-  const { selectedTask, getTaskById, isLoading } = tasks
+  const { selectedTask, getTaskById, isDetailLoading } = tasks
 
   const [openShare, setOpenShare] = useState(false)
 
@@ -24,10 +24,10 @@ export default function TaskDetail() {
     }
   }, [id, getTaskById])
 
-  if (isLoading) {
+  if (isDetailLoading) {
     return (
       <div className="rounded-3xl border border-slate-200 bg-white p-10 text-center shadow-sm">
-        <AppLoader />
+        <AppLoader inline />
       </div>
     )
   }
@@ -47,20 +47,22 @@ export default function TaskDetail() {
           to="/tasks"
           className="inline-flex items-center gap-2 text-sm font-medium text-red-400 transition hover:text-red-500"
         >
-          <MoveLeft className="h-4 w-4" />
-          Back to tasks
+          <CornerDownLeft />
         </Link>
 
-        <div>
+        <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold text-slate-900">
             {selectedTask.title}
           </h1>
-          <div className="mt-2 flex gap-2">
-            <Button onClick={() => setOpenShare(true)}>Share Task</Button>
+
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => setOpenShare(true)}
+              className="flex items-center gap-2"
+            >
+              <Share2 className="h-4 w-4" />
+            </Button>
           </div>
-          <p className="mt-1 text-sm text-slate-500">
-            Manage and update your task.
-          </p>
         </div>
       </div>
 

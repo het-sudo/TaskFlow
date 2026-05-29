@@ -5,6 +5,7 @@ import { Input } from "@/shared/resusable/Input"
 import { Button } from "@/shared/resusable/Button"
 
 import { useShareTask } from "../useShare"
+import { Search } from "lucide-react"
 
 type Props = {
   taskId: string
@@ -21,9 +22,11 @@ export default function ShareTaskModal({ taskId, onClose }: Props) {
       return
     }
 
-    await shareTask(taskId, email)
+    const ok = await shareTask(taskId, email)
 
-    onClose()
+    if (ok) {
+      onClose()
+    }
   }
 
   return (
@@ -43,6 +46,7 @@ export default function ShareTaskModal({ taskId, onClose }: Props) {
             placeholder="Enter email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            leftIcon={<Search />}
           />
         </div>
 

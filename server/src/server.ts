@@ -1,11 +1,11 @@
-import "dotenv/config"
 import http from "http"
 import app from "./app.js"
+import { env } from "./config/env.js"
 import prisma from "./lib/prisma.js"
 import logger from "./utils/logger.js"
 import { initializeSocket } from "./socket/index.js"
 
-const PORT = process.env.PORT || 3000
+const PORT = env.PORT
 
 async function startServer() {
   try {

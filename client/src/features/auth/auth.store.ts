@@ -1,9 +1,7 @@
 import { create } from "zustand"
-
 import type { User } from "@/shared/types"
 
-//managing state
-
+// global auth state store (keeps user session across app)
 type AuthState = {
   user: User | null
 
@@ -11,10 +9,13 @@ type AuthState = {
 
   isLoading: boolean
 
+  // set logged-in user and mark auth as true
   setUser: (user: User) => void
 
+  // clear session on logout
   clearUser: () => void
 
+  // control initial auth loading state (used during token check)
   setLoading: (loading: boolean) => void
 }
 

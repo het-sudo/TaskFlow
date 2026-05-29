@@ -1,18 +1,13 @@
-import { Link } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-
 import { Button } from "@/shared/resusable/Button"
-
 import { Input } from "@/shared/resusable/Input"
 
 import { registerSchema, type RegisterInput } from "../auth.schema"
 
 import { useAuth } from "../useAuth"
 
-import { ROUTES } from "@/shared/constants"
-import { Eye, EyeOff, Lock, Mail, User } from "lucide-react"
-import { useState } from "react"
+import { Lock, Mail, User } from "lucide-react"
 
 export function RegisterPage() {
   const { register: registerUser } = useAuth()
@@ -26,7 +21,6 @@ export function RegisterPage() {
   } = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
   })
-  const [showPassword, setShowPassword] = useState(false)
 
   return (
     <>
@@ -58,61 +52,27 @@ export function RegisterPage() {
         />
 
         <Input
-          type={showPassword ? "text" : "password"}
+          type={"password"}
           label="Password"
           placeholder="Enter your password"
           error={errors.password?.message}
           leftIcon={<Lock className="h-5 w-5" />}
-          rightIcon={
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="text-gray-400 transition hover:text-gray-600"
-            >
-              {showPassword ? (
-                <EyeOff className="h-5 w-5" />
-              ) : (
-                <Eye className="h-5 w-5" />
-              )}
-            </button>
-          }
+          enablePasswordToggle
           {...register("password")}
         />
         <Input
-          type={showPassword ? "text" : "password"}
+          type={"password"}
           label="Confirm Password"
           placeholder="Confirm your password"
           error={errors.confirmPassword?.message}
           leftIcon={<Lock className="h-5 w-5" />}
-          rightIcon={
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="text-gray-400 transition hover:text-gray-600"
-            >
-              {showPassword ? (
-                <EyeOff className="h-5 w-5" />
-              ) : (
-                <Eye className="h-5 w-5" />
-              )}
-            </button>
-          }
+          enablePasswordToggle
           {...register("confirmPassword")}
         />
         <Button type="submit" loading={isSubmitting} fullWidth>
           Register
         </Button>
       </form>
-
-      <p className="mt-6 text-center text-sm text-slate-700">
-        Already have an account?{" "}
-        <Link
-          className="font-medium text-red-400 transition hover:opacity-70"
-          to={ROUTES.LOGIN}
-        >
-          Login
-        </Link>
-      </p>
     </>
   )
 }

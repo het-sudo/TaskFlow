@@ -33,3 +33,7 @@ export const generateJti = () => {
 export const redisKeys = {
   blacklist: (jti: string) => `auth:bl:${jti}`,
 }
+
+export const hashToken = (token: string): string => {
+  return crypto.createHash("sha256").update(token).digest("hex")
+}

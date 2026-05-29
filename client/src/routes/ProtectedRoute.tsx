@@ -1,6 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom"
 
 import { useAuthStore } from "@/features/auth/auth.store"
+import { AppLoader } from "@/shared/AppLoader"
 
 import { ROUTES } from "@/shared/constants"
 
@@ -12,11 +13,11 @@ export function ProtectedRoute() {
   const isLoading = useAuthStore((state) => state.isLoading)
 
   if (isLoading) {
-    return null
+    return <AppLoader />
   }
 
   if (!isAuthenticated) {
-    return <Navigate to={ROUTES.LOGIN} replace />
+    return <Navigate to={ROUTES.INITIAL} replace />
   }
 
   return <Outlet />

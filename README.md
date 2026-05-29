@@ -1,24 +1,30 @@
-# TaskFlow
+# 🚀 TaskFlow
 
-A full-stack task management application with task sharing and real-time notifications.
+A full-stack task management system with real-time collaboration, task sharing, and live notifications powered by Socket.io.
+
+TaskFlow is designed as a **scalable, modular, production-ready system** with offline-safe notifications, real-time updates, and a clean feature-based architecture.
 
 ---
 
-# Features
+# ✨ Features
 
-- User authentication with JWT
-- Protected routes
-- Create, update, delete tasks
-- Task filtering by status, priority, and category
-- Share tasks with other users
+- Secure JWT authentication with refresh token sessions
+- Protected routes with ownership validation
+- Full CRUD for tasks
+- Advanced filtering (status, priority, category)
+- Task sharing between users (many-to-many system)
 - Real-time notifications using Socket.io
-- Notification unread count
-- Responsive UI
-- Modular and scalable architecture
+- Offline-safe notification persistence (DB-backed)
+- Unread notification tracking system
+- Mark notifications as read
+- Dashboard analytics API
+- Soft delete support (safe data recovery)
+- Modular feature-based backend architecture
+- Strong request validation using Zod
 
 ---
 
-# Tech Stack
+# 🧠 Tech Stack
 
 ## Frontend
 
@@ -30,328 +36,292 @@ A full-stack task management application with task sharing and real-time notific
 - Axios
 - React Hook Form
 - Zod
+- Socket.io Client
 
 ## Backend
 
-- Express
+- Node.js + Express
 - TypeScript
 - PostgreSQL
 - Prisma ORM
 - JWT Authentication
 - Socket.io
 - Zod Validation
+- Helmet Security Middleware
 
 ---
 
-# Project Structure
+# 📁 Project Structure
 
-```txt
 taskflow/
 │
 ├── client/
-│   ├── src/
-│   │   ├── pages/
-│   │   ├── components/
-│   │   ├── api/
-│   │   ├── routes/
-│   │   ├── layouts/
-│   │   ├── utils/
-│   │   ├── types/
-│   │   └── features/
-│   │
-│   ├── public/
-│   ├── package.json
-│   └── .env
+│ ├── src/
+│ │ ├── components/
+│ │ ├── routes/
+│ │ ├── shared/
+│ │ ├── libs/
+│ │ ├── styles/
+│ │ └── features/
+│ ├── public/
+│ ├── package.json
+│ └── .env
 │
 ├── server/
-│   ├── prisma/
-│   ├── src/
-│   │   ├── modules/
-│   │   ├── middleware/
-│   │   ├── config/
-│   │   ├── sockets/
-│   │   ├── utils/
-│   │   ├── lib/
-│   │   └── types/
-│   │
-│   ├── package.json
-│   └── .env
+│ ├── prisma/
+│ ├── src/
+│ │ ├── modules/
+│ │ ├── middleware/
+│ │ ├── config/
+│ │ ├── sockets/
+│ │ ├── utils/
+│ │ ├── routes/
+│ │ └── types/
+│ ├── package.json
+│ └── .env
 │
-├── .github/
-├── .vscode/
-├── README.md
-└── .gitignore
-```
+└── README.md
 
 ---
 
-# Backend Architecture
+# 🧩 Backend Architecture Pattern
 
-Each module follows the same structure:
+Each feature module follows:
 
-```txt
 module/
 ├── routes
 ├── controller
 ├── service
 ├── validation
 └── types
-```
 
-This keeps the codebase:
+### Why this architecture?
 
-- modular
-- maintainable
-- reusable
-- scalable
-
----
-
-# Environment Variables
-
-## Server `.env`
-
-```env
-PORT=5000
-
-DATABASE_URL=postgresql://postgres:password@localhost:5432/taskflow
-
-JWT_SECRET=your_jwt_secret
-
-CLIENT_URL=http://localhost:5173
-```
+- Feature isolation
+- Easy scaling
+- Independent debugging
+- Clean separation of business logic
 
 ---
 
-## Client `.env`
+# 🗄️ Database Schema Overview (Prisma)
 
-```env
-VITE_API_URL=http://localhost:5000
-```
+## 👤 User
 
----
+- Authentication entity
+- Owns tasks
+- Receives notifications
+- Maintains sessions
 
-# Setup Instructions
+## 📌 Task
 
-## 1. Clone Repository
+- Core business entity
+- Status, priority, category support
+- Belongs to a user
+- Can be shared
 
-```bash
-git clone YOUR_GITHUB_REPOSITORY_URL
-```
+## 🤝 TaskShare
 
-```bash
-cd taskflow
-```
+- Many-to-many relation (users ↔ tasks)
+- Tracks sharedBy + sharedWith
+- Prevents duplicate sharing
 
----
+## 🔔 Notification
 
-# Backend Setup
+- Persistent event storage
+- Supports read/unread state
 
-## 2. Navigate to Server
+## 🔐 Session
 
-```bash
-cd server
-```
-
----
-
-## 3. Install Dependencies
-
-```bash
-pnpm install
-```
+- Refresh token system
+- Secure session control
 
 ---
 
-## 4. Setup Prisma
+# ⚡ API OVERVIEW
 
-```bash
-npx prisma generate
-```
+## Auth
 
-```bash
-npx prisma migrate dev
-```
-
----
-
-## 5. Start Backend Server
-
-```bash
-pnpm dev
-```
-
-Backend runs on:
-
-```txt
-http://localhost:5000
-```
-
----
-
-# Frontend Setup
-
-## 6. Navigate to Client
-
-```bash
-cd client
-```
-
----
-
-## 7. Install Dependencies
-
-```bash
-pnpm install
-```
-
----
-
-## 8. Start Frontend
-
-```bash
-pnpm dev
-```
-
-Frontend runs on:
-
-```txt
-http://localhost:5173
-```
-
----
-
-# API Endpoints
-
-## Authentication
-
-| Method | Endpoint         | Description   |
-| ------ | ---------------- | ------------- |
-| POST   | `/auth/register` | Register user |
-| POST   | `/auth/login`    | Login user    |
-
----
+- POST `/auth/register`
+- POST `/auth/login`
+- POST `/auth/logout`
+- POST `/auth/refresh-token`
+- GET `/auth/me`
 
 ## Tasks
 
-| Method | Endpoint     | Description |
-| ------ | ------------ | ----------- |
-| GET    | `/tasks`     | Get tasks   |
-| POST   | `/tasks`     | Create task |
-| PUT    | `/tasks/:id` | Update task |
-| DELETE | `/tasks/:id` | Delete task |
-
----
-
-## Task Sharing
-
-| Method | Endpoint           | Description |
-| ------ | ------------------ | ----------- |
-| POST   | `/tasks/:id/share` | Share task  |
-
----
+- GET `/tasks`
+- POST `/tasks`
+- GET `/tasks/:id`
+- PUT `/tasks/:id`
+- DELETE `/tasks/:id`
+- POST `/tasks/:id/share`
+- GET `/tasks/categories`
+- GET `/tasks/shared-with-me`
+- GET `/tasks/shared-with-me/categories`
 
 ## Notifications
 
-| Method | Endpoint         | Description       |
-| ------ | ---------------- | ----------------- |
-| GET    | `/notifications` | Get notifications |
+- GET `/notifications`
+- PATCH `/notifications/:id/read`
+
+## Dashboard
+
+- GET `/dashboard/stats`
 
 ---
 
-# Database Schema Overview
+# 🔌 REAL-TIME SYSTEM (Socket.io)
 
-## User
+## Events
 
-- id
-- name
-- email
-- password
-
-## Task
-
-- id
-- title
-- description
-- category
-- priority
-- status
-- dueDate
-- ownerId
-
-## Notification
-
-- id
-- message
-- isRead
-- receiverId
+- notification:new
+- notification:read
+- task:shared
 
 ---
 
-# Security Practices
+# 🔔 Notification Flow (IMPORTANT)
+
+- Online user → receives toast instantly
+- Offline user → stored in DB only
+- On login → fetch DB notifications, update badge only (NO toasts replay)
+- After login → only new events trigger toasts
+
+---
+
+# 🧠 NOTABLE DESIGN DECISIONS
+
+## Prisma ORM
+
+- Type-safe DB access
+- Strong migrations
+- Reduces runtime SQL errors
+
+## PostgreSQL
+
+- Reliable relational database
+- Great for task + sharing relationships
+
+## TaskShare Table
+
+- Handles many-to-many relations
+- Stores metadata (sharedBy, timestamps)
+
+## Notification in DB
+
+- Enables offline support
+- Multi-device sync
+- Persistent history
+
+## No toast replay on login
+
+- Prevents spam UX
+- Separates history vs live events
+
+## Modular backend
+
+- Feature isolation
+- Easy scaling
+
+## Session table
+
+- Refresh token rotation
+
+## Zod validation
+
+- Strong input validation
+- Cleaner controllers
+
+---
+
+# 🚀 UNIQUE SYSTEM HIGHLIGHTS
+
+- Hybrid real-time + offline notification system
+- Event-driven Socket architecture
+- Scalable modular backend design
+- Indexed PostgreSQL schema
+- Clean separation of business logic
+
+---
+
+# 🔮 FUTURE ENHANCEMENTS
+
+## Real-time
+
+- Redis Socket scaling
+- Room-based collaboration
+- Live presence indicators
+
+## Product
+
+- Task comments (threaded)
+- File uploads (S3 / Cloudinary)
+- Drag & drop Kanban
+- Recurring tasks
+
+## Notifications
+
+- Email + push notifications
+- Smart grouping
+- Priority-based alerts
+
+## AI
+
+- Smart task prioritization
+- Auto categorization
+- Task summarizer
+
+## Security
+
+- Role-based access control
+- Audit logs
+- Device management
+
+## DevOps
+
+- Docker setup
+- CI/CD pipeline
+- Production scaling
+
+---
+
+# 🛡️ SECURITY PRACTICES
 
 - JWT authentication
-- Password hashing using bcrypt
-- Request validation using Zod
-- Protected routes
-- Ownership checks before update/delete
-- Environment variables for secrets
-- Helmet security middleware
-- Input sanitization
+- Password hashing (bcrypt)
+- Zod validation
+- Environment variables protection
 
 ---
 
-# GitHub Workflow
+# ⚙️ SETUP INSTRUCTIONS
 
-- Feature branch workflow
-- No direct commits to main
-- Meaningful commit messages
-- Pull request before merge
+## Clone
 
-Example branches:
-
-```txt
-feature/auth
-feature/task-crud
-feature/task-sharing
-feature/socket-notifications
+```bash
+git clone <repo-url>
+cd taskflow
 ```
 
----
+Backend
+cd server
+pnpm install
+pnpm prisma generate
+pnpm prisma migrate dev
+pnpm dev
 
-# Future Improvements
+Backend runs at:
+http://localhost:9000
 
-- Task comments
-- File attachments
-- Email notifications
-- Role-based access control
-- Pagination
-- Search functionality
-- Docker deployment
-- Unit and integration testing
+Frontend
+cd client
+pnpm install
+pnpm dev
 
----
+Frontend runs at:
+http://localhost:5173
 
-# Screenshots
+👨‍💻 AUTHOR
 
-Add screenshots here after UI completion.
-
-Example:
-
-```txt
-assets/dashboard.png
-assets/login.png
-assets/notifications.png
-```
-
----
-
-# Author
-
-Your Name
-
----
-
-# License
-
-MIT License
+HET PATEL

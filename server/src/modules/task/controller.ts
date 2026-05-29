@@ -10,6 +10,7 @@ import {
   createTaskService,
   deleteTaskService,
   getCategories,
+  getSharedCategories,
   getSharedTasksService,
   getTaskByIdService,
   getTasksService,
@@ -24,8 +25,6 @@ import {
   TaskIdInput,
   UpdateTaskInput,
 } from "./validator.js"
-
-import { getIO } from "../../socket/index.js"
 
 export const createTask = asyncHandler(
   async (req: AuthRequest, res: Response) => {
@@ -200,19 +199,33 @@ export const shareTask = asyncHandler(async (req: AuthRequest, res) => {
   })
 })
 
+export const getSharedTaskCategories = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const categories = await getSharedCategories(req.user!.userId)
+
+    return sendResponse(
+      res,
+      StatusCodes.OK,
+      "Shared task categories fetched successfully",
+      categories
+    )
+  }
+)
+
 export const getSharedTasks = asyncHandler(
   async (req: AuthRequest, res: Response) => {
     logger.info("get shared tasks request received", {
       userId: req.user?.userId,
     })
 
-    const tasks = await getSharedTasksService(req.user!.userId)
+    const filters = req.validated.query as TaskFiltersInput
+    const result = await getSharedTasksService(req.user!.userId, filters)
 
     return sendResponse(
       res,
       StatusCodes.OK,
       "Shared tasks fetched successfully",
-      tasks
+      result
     )
   }
 )

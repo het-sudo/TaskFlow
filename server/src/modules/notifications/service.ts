@@ -1,5 +1,6 @@
 import prisma from "../../lib/prisma.js"
 
+// fetch all notifications + unread count for a user
 export async function getNotificationsService(userId: string) {
   const [notifications, unreadCount] = await Promise.all([
     prisma.notification.findMany({
@@ -7,10 +8,12 @@ export async function getNotificationsService(userId: string) {
         userId,
       },
 
+      // latest notifications first (inbox style)
       orderBy: {
         createdAt: "desc",
       },
 
+      // include minimal task info for UI context
       include: {
         task: {
           select: {
@@ -21,6 +24,7 @@ export async function getNotificationsService(userId: string) {
       },
     }),
 
+    // count only unread notifications for badge indicator
     prisma.notification.count({
       where: {
         userId,
@@ -35,10 +39,14 @@ export async function getNotificationsService(userId: string) {
   }
 }
 
+/**
+ * Toggle notification read/unread status
+ */
 export async function markNotificationReadService(
   userId: string,
   notificationId: string
 ) {
+  // find notification belonging to user (security check)
   const notification = await prisma.notification.findFirst({
     where: {
       id: notificationId,
@@ -50,6 +58,7 @@ export async function markNotificationReadService(
     return null
   }
 
+  // toggle read state instead of hard setting
   return prisma.notification.update({
     where: {
       id: notificationId,

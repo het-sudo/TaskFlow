@@ -1,4 +1,10 @@
-import { forwardRef, type InputHTMLAttributes, type ReactNode } from "react"
+import {
+  forwardRef,
+  type InputHTMLAttributes,
+  type ReactNode,
+  useState,
+} from "react"
+import { Eye, EyeOff } from "lucide-react"
 
 type Props = InputHTMLAttributes<HTMLInputElement> & {
   label?: string
@@ -6,6 +12,7 @@ type Props = InputHTMLAttributes<HTMLInputElement> & {
   helperText?: string
   leftIcon?: ReactNode
   rightIcon?: ReactNode
+  enablePasswordToggle?: boolean
 }
 
 export const Input = forwardRef<HTMLInputElement, Props>(
@@ -18,10 +25,16 @@ export const Input = forwardRef<HTMLInputElement, Props>(
       disabled,
       leftIcon,
       rightIcon,
+      type,
+      enablePasswordToggle,
       ...props
     },
     ref
   ) => {
+    const [showPassword, setShowPassword] = useState(false)
+
+    const isPassword = type === "password" && enablePasswordToggle
+
     return (
       <div className="space-y-2">
         {label && (
@@ -40,6 +53,7 @@ export const Input = forwardRef<HTMLInputElement, Props>(
           <input
             ref={ref}
             disabled={disabled}
+            type={isPassword ? (showPassword ? "text" : "password") : type}
             className={`
               w-full rounded-xl border bg-white py-3 text-sm text-slate-800
               outline-none transition-all duration-200
@@ -51,8 +65,7 @@ export const Input = forwardRef<HTMLInputElement, Props>(
               }
 
               ${leftIcon ? "pl-10" : "px-4"}
-
-              ${rightIcon ? "pr-10" : "px-4"}
+              ${rightIcon || isPassword ? "pr-10" : "px-4"}
 
               disabled:cursor-not-allowed
               disabled:bg-slate-100
@@ -63,11 +76,24 @@ export const Input = forwardRef<HTMLInputElement, Props>(
             {...props}
           />
 
-          {rightIcon && (
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-              {rightIcon}
-            </div>
-          )}
+          {/* RIGHT SIDE */}
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2 text-slate-400">
+            {isPassword ? (
+              <button
+                type="button"
+                onClick={() => setShowPassword((p) => !p)}
+                className="hover:text-slate-600 transition"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
+            ) : (
+              rightIcon
+            )}
+          </div>
         </div>
 
         {error ? (

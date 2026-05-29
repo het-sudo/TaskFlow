@@ -49,13 +49,14 @@ export default function CreateTaskModal({ open, onClose, tasks }: Props) {
   })
 
   async function onSubmit(values: CreateTaskInput) {
-    await createTask({
+    const ok = await createTask({
       ...values,
       dueDate: values.dueDate
         ? new Date(values.dueDate).toISOString()
         : undefined,
     })
 
+    if (!ok) return
     reset()
     onClose()
   }

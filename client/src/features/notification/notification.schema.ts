@@ -16,10 +16,12 @@ export interface NotificationTask {
 export interface Notification {
   id: string
   type: NotificationType
-  title: string
   message: string
   isRead: boolean
   createdAt: string
+  taskId?: string | null
   sender?: NotificationSender
   task?: NotificationTask
 }
+
+export type NotificationFilter = "all" | "unread" | "read"

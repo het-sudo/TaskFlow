@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
@@ -16,8 +16,9 @@ import { Button } from "@/shared/resusable/Button"
 
 import { FileText, Tag, Calendar, Trash2, Save } from "lucide-react"
 
-import { useTask } from "../useTask"
 import { useNavigate } from "react-router-dom"
+import type { useTask } from "../useTask"
+import { Modal } from "@/shared/resusable/Modal"
 
 interface Props {
   taskId: string
@@ -26,7 +27,7 @@ interface Props {
 
 export default function EditTaskForm({ taskId, tasks }: Props) {
   const { selectedTask, updateTask, deleteTask } = tasks
-
+  const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const navigate = useNavigate()
 
   const {
@@ -52,22 +53,16 @@ export default function EditTaskForm({ taskId, tasks }: Props) {
   }, [selectedTask, reset])
 
   async function onSubmit(values: UpdateTaskInput) {
-    await updateTask(taskId, {
+    const ok = await updateTask(taskId, {
       ...values,
       dueDate: values.dueDate
         ? new Date(values.dueDate).toISOString()
         : undefined,
     })
 
-    navigate("/tasks")
-  }
-
-  async function handleDelete() {
-    const confirmed = window.confirm("Delete this task?")
-    if (!confirmed) return
-
-    await deleteTask(taskId)
-    navigate("/tasks")
+    if (ok) {
+      navigate("/tasks")
+    }
   }
 
   return (
@@ -83,6 +78,7 @@ export default function EditTaskForm({ taskId, tasks }: Props) {
             type="text"
             error={errors.title?.message}
             {...register("title")}
+            placeholder="Enter Your Title"
           />
         </div>
 
@@ -94,6 +90,7 @@ export default function EditTaskForm({ taskId, tasks }: Props) {
 
           <Textarea
             rows={5}
+            placeholder="Enter Your Description"
             error={errors.description?.message}
             {...register("description")}
           />
@@ -108,6 +105,7 @@ export default function EditTaskForm({ taskId, tasks }: Props) {
 
             <Input
               type="text"
+              placeholder="Enter Your Category"
               error={errors.category?.message}
               {...register("category")}
             />
@@ -149,7 +147,11 @@ export default function EditTaskForm({ taskId, tasks }: Props) {
         </div>
 
         <div className="flex items-center justify-between pt-4">
-          <Button type="button" variant="danger" onClick={handleDelete}>
+          <Button
+            type="button"
+            variant="danger"
+            onClick={() => setOpenDeleteModal(true)}
+          >
             <Trash2 className="mr-2 h-4 w-4" />
             Delete Task
           </Button>
@@ -160,6 +162,40 @@ export default function EditTaskForm({ taskId, tasks }: Props) {
           </Button>
         </div>
       </form>
+      <Modal
+        open={openDeleteModal}
+        onClose={() => setOpenDeleteModal(false)}
+        title="Delete Task"
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-slate-600">
+            Are you sure you want to delete this task? This action cannot be
+            undone.
+          </p>
+
+          <div className="flex justify-end gap-3">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setOpenDeleteModal(false)}
+            >
+              Cancel
+            </Button>
+
+            <Button
+              type="button"
+              variant="danger"
+              loading={isSubmitting}
+              onClick={async () => {
+                const ok = await deleteTask(taskId)
+                if (ok) navigate("/tasks")
+              }}
+            >
+              Yes, Delete
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   )
 }

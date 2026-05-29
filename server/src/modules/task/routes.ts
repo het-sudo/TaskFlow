@@ -4,6 +4,7 @@ import {
   createTask,
   deleteTask,
   getSharedTasks,
+  getSharedTaskCategories,
   getTaskById,
   getTaskCategories,
   getTasks,
@@ -47,7 +48,20 @@ router.get(
 
 router.get("/categories", authMiddleware, getTaskCategories)
 
-router.get("/shared-with-me", authMiddleware, getSharedTasks)
+router.get(
+  "/shared-with-me/categories",
+  authMiddleware,
+  getSharedTaskCategories
+)
+
+router.get(
+  "/shared-with-me",
+  authMiddleware,
+  validate({
+    query: taskFiltersSchema,
+  }),
+  getSharedTasks
+)
 
 router.post(
   "/:id/share",
