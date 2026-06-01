@@ -1,408 +1,496 @@
-🚀 TaskFlow
- 
-🔥 A modern full-stack task management platform designed for efficient collaboration, task tracking, and productivity.
- 
-Built with modern web technologies using scalable architecture, authentication, protected routes, and clean backend practices.
- 
+# ⚡ TaskFlow
+> 🚀 Full-Stack Task Management & Collaboration Platform
+
 ---
- 
-# ✨ Features
- 
-## 🔐 Authentication & Authorization
- 
- *🔑 JWT-based authentication*
- 🛡️ Secure protected routes
- *👤 User session handling*
- 🔒 Password hashing & validation
- 
+
+## 1. 📋 Executive Summary
+
+TaskFlow is a full-stack task management and collaboration platform built with modern web technologies. It features secure JWT authentication with refresh token rotation, real-time notifications via Socket.IO, Redis-backed token blacklisting, and a feature-based React frontend architecture.
+
+The system is designed for medium-to-advanced complexity use cases and serves as a strong portfolio demonstration of production-grade engineering patterns.
+
 ---
- 
-## 📋 Task Management
- 
- *➕ Create tasks*
- ✏️ Update tasks
- *🗑️ Delete tasks*
- 📌 Mark tasks as completed/incomplete
- *📂 Organize tasks efficiently*
- 
+
+## 2. 🛠️ Technology Stack
+
+### 2.1 🎨 Frontend
+
+| Package | Version |
+|---|---|
+| ⚛️ React | 19.2.5 |
+| 🔷 TypeScript | 6 |
+| ⚡ Vite | 8 |
+| 🐻 Zustand | State Management |
+| 📝 React Hook Form | Form Handling |
+| 🛡️ Zod | Schema Validation |
+| 🌐 Axios | HTTP Client |
+| 🔌 Socket.IO Client | Real-time Communication |
+
+### 2.2 ⚙️ Backend
+
+| Package | Version / Role |
+|---|---|
+| 🚂 Express | 5.2.1 |
+| 🔺 Prisma ORM | 6.7.0 |
+| 🐘 PostgreSQL | Primary Database |
+| 🔑 JWT | Authentication |
+| 🔒 bcrypt | Password Hashing |
+| 🟥 Redis (ioredis) | Token Blacklist |
+| 🔌 Socket.IO | Real-time Events |
+| 📜 Winston | Logging |
+
 ---
- 
-## 👥 User Features
- 
- 👤 User-specific task management
- *📊 Personalized dashboard*
- 🔍 Task filtering & searching
- *📅 Task tracking workflow*
- 
----
- 
-# 🏗️ Backend Architecture
- 
- 🧩 Layered architecture
- *📋 Validation layer*
- ⚠️ Centralized error handling
- *📦 Reusable API response structure*
- 🛢️ Database ORM integration
- *🧱 Modular route structure*
- 
----
- 
-# 🎨 Frontend Architecture
- 
- ⚛️ React + TypeScript
- *🎨 TailwindCSS*
- ♻️ Reusable components
- *🚧 Protected routes*
- 🌐 API service layer
- *📱 Responsive UI*
- 
----
- 
-# 🛠️ Tech Stack
- 
-## 💻 Frontend
- 
- ⚛️ React
- *📘 TypeScript*
- 🎨 TailwindCSS
- *🌍 React Router DOM*
- 📡 Axios
- 
----
- 
-## 🖥️ Backend
- 
- *🟢 Node.js*
- 🚂 Express.js
- *📘 TypeScript*
- 🛢️ Database ORM
- *🔐 JWT Authentication*
- 📋 Validation Middleware
- 
----
- 
-# 📂 Project Structure
- 
-## 🎨 Frontend
- 
-```bash
-src/
-├── components/
-├── pages/
-├── routes/
-├── services/
-├── hooks/
-├── utils/
-├── types/
-└── layouts/
+
+## 3. 🏗️ High-Level Architecture
+
+The React client communicates with the Express API via Axios (HTTP) and Socket.IO (WebSocket). The API layer handles all business logic and persists data to PostgreSQL via Prisma ORM. Redis is used exclusively for fast token blacklisting during logout and session invalidation.
+
+```text
+React Client
+     |
+ Axios (HTTP) + Socket.IO (WebSocket)
+     |
+Express API
+     |
++----+--------------------+
+|                         |
+v                         v
+PostgreSQL              Redis
+(Prisma ORM)        (Token Blacklist)
 ```
- 
+
 ---
- 
-## 🖥️ Backend
- 
-```bash
-src/
-├── config/
-├── controllers/
-├── middlewares/
-├── modules/
-├── routes/
-├── services/
-├── utils/
-├── validations/
-└── database/
+
+## 4. 📁 Project Structure
+
+### 4.1 🎨 Frontend Structure
+
+```text
+client/
+├── src/
+│   ├── features/
+│   │   ├── auth/
+│   │   ├── task/
+│   │   ├── shared/
+│   │   │   ├── components/
+│   │   │   ├── hooks/
+│   │   │   ├── api/
+│   │   │   ├── axios/
+│   │   │   ├── appLayout/
+│   │   │   └── types/
+│   │   ├── notification/
+│   │   └── dashboard/
+│   ├── routes/
+│   ├── app.tsx
+│   └── main.tsx
+├── public/
+├── package.json
+└── vite.config.ts
 ```
- 
----
- 
-# 🗄️ Database Schema
- 
+
+| Folder | Responsibility |
+|---|---|
+| 🔐 auth | Authentication UI & logic |
+| ✅ task | Task Management |
+| 🧩 shared/components | Reusable UI components |
+| 🪝 shared/hooks | Reusable custom hooks |
+| 🌐 shared/api | Shared API call helpers |
+| 📡 shared/axios | Axios instance & interceptors |
+| 🖼️ shared/appLayout | Application layout wrappers |
+| 🔷 shared/types | Shared TypeScript types |
+| 🔔 notification | Notification Center |
+| 📊 dashboard | Dashboard Analytics |
+| 🗺️ routes | Route Definitions |
+| 🏠 app.tsx | Root application component |
+| 🚀 main.tsx | Application entry point |
+
+### 4.2 ⚙️ Backend Structure
+
+```text
+server/
+├── prisma/
+│   ├── schema.prisma
+│   └── migrations/
+├── src/
+│   ├── modules/
+│   │   ├── auth/
+│   │   │   ├── controllers/
+│   │   │   ├── services/
+│   │   │   ├── routes/
+│   │   │   └── validators/
+│   │   ├── task/
+│   │   │   ├── controllers/
+│   │   │   ├── services/
+│   │   │   ├── routes/
+│   │   │   └── validators/
+│   │   ├── notification/
+│   │   │   ├── controllers/
+│   │   │   ├── services/
+│   │   │   ├── routes/
+│   │   │   └── validators/
+│   │   └── dashboard/
+│   │       ├── controllers/
+│   │       ├── services/
+│   │       └── routes/
+│   ├── middleware/
+│   ├── sockets/
+│   ├── configs/
+│   ├── lib/
+│   ├── constants/
+│   ├── utils/
+│   ├── types/
+│   └── app.ts
+├── package.json
+└── tsconfig.json
+```
+
+| Folder | Responsibility |
+|---|---|
+| 📦 modules/ | Feature-grouped domain modules |
+| 🎮 modules/*/controllers | Handle HTTP requests & responses |
+| 🧠 modules/*/services | Business logic |
+| 🛤️ modules/*/routes | API endpoint definitions |
+| 🛡️ modules/*/validators | Zod schemas for that module |
+| 🔒 middleware | Auth middleware & global validation |
+| 🔌 sockets | Realtime Socket.IO communication |
+| ⚙️ configs | Environment & service configurations |
+| 📚 lib | Third-party client setup (Redis, Prisma, etc.) |
+| 📌 constants | App-wide constant values |
+| 🔧 utils | Shared utility functions |
+| 🔷 types | Shared TypeScript types |
+| 🗄️ prisma | Database schema & migrations |
 
 ---
 
-## 🔢 Enums
+## 5. 🗄️ Database Schema
 
-| Enum Name        | Values                  |
-| ---------------- | ----------------------- |
-| NotificationType | TASK_SHARED             |
-| TaskStatus       | TODO, IN_PROGRESS, DONE |
-| TaskPriority     | LOW, MEDIUM, HIGH       |
+### 5.1 📊 Models Overview
 
----
+| Model | Purpose |
+|---|---|
+| 👤 User | User accounts and profile data |
+| ✅ Task | Task records with soft delete support |
+| 🤝 TaskShare | Shared task relationships between users |
+| 🔔 Notification | User notifications triggered by task events |
+| 🔐 Session | Refresh token session management |
 
-## 👤 User Model
+### 5.2 🔗 Relationships
 
-| Field       | Type          | Description            |
-| ----------- | ------------- | ---------------------- |
-| id          | String (UUID) | Primary key            |
-| name        | String        | User name              |
-| email       | String        | Unique email           |
-| password    | String        | Hashed password        |
-| lastLoginAt | DateTime?     | Last login timestamp   |
-| createdAt   | DateTime      | Account creation time  |
-| updatedAt   | DateTime      | Auto-updated timestamp |
+```text
+User
+ ├── Task          (one-to-many)
+ ├── Session       (one-to-many)
+ ├── Notification  (one-to-many)
+ └── TaskShare     (one-to-many)
 
-### Relations
+Task
+ ├── TaskShare     (one-to-many)
+ └── Notification  (one-to-many)
+```
 
-* sessions → Session[]
-* ownedTasks → Task[]
-* sharedTasks → TaskShare[]
-* createdTaskShares → TaskShare (TaskSharedBy relation)
-* notifications → Notification[]
+### 5.3 👤 User
 
----
+| Field | Type |
+|---|---|
+| id | String (UUID) |
+| name | String |
+| email | String (unique) |
+| password | String (hashed) |
+| lastLoginAt | DateTime |
+| createdAt | DateTime |
+| updatedAt | DateTime |
 
-## 📌 Task Model
+### 5.4 ✅ Task
 
-| Field       | Type          | Description               |
-| ----------- | ------------- | ------------------------- |
-| id          | String (UUID) | Primary key               |
-| title       | String        | Task title                |
-| description | String?       | Optional description      |
-| category    | String        | Default: "general"        |
-| priority    | TaskPriority  | LOW / MEDIUM / HIGH       |
-| status      | TaskStatus    | TODO / IN_PROGRESS / DONE |
-| dueDate     | DateTime?     | Optional deadline         |
-| ownerId     | String        | Foreign key (User)        |
-| createdAt   | DateTime      | Created timestamp         |
-| updatedAt   | DateTime      | Auto-updated timestamp    |
-| deletedAt   | DateTime?     | Soft delete support       |
+| Field | Type |
+|---|---|
+| id | String (UUID) |
+| title | String |
+| description | String |
+| category | String |
+| priority | Enum |
+| status | Enum |
+| dueDate | DateTime |
+| ownerId | String (FK → User) |
+| deletedAt | DateTime? (soft delete) |
 
-### Indexes
+**📌 Business Rules:**
+- Created by owner only
+- Supports soft delete via `deletedAt`
+- Can be shared with other users
+- Generates notifications on share/update
 
-* ownerId
-* ownerId + status
-* ownerId + priority
-* ownerId + category
-* deletedAt
+### 5.5 🔔 Notification
 
----
+| Field | Type |
+|---|---|
+| id | String (UUID) |
+| userId | String (FK → User) |
+| taskId | String (FK → Task) |
+| message | String |
+| isRead | Boolean |
+| type | Enum |
 
-## 🔗 TaskShare Model
+### 5.6 🔐 Session
 
-| Field        | Type          | Description                |
-| ------------ | ------------- | -------------------------- |
-| id           | String (UUID) | Primary key                |
-| taskId       | String        | Related task               |
-| sharedWithId | String        | User receiving shared task |
-| sharedById   | String        | User who shared            |
-| createdAt    | DateTime      | Share timestamp            |
-
-### Constraints
-
-* UNIQUE(taskId, sharedWithId)
-
----
-
-## 🔔 Notification Model
-
-| Field     | Type             | Description          |
-| --------- | ---------------- | -------------------- |
-| id        | String (UUID)    | Primary key          |
-| userId    | String           | Recipient user       |
-| taskId    | String?          | Related task         |
-| type      | NotificationType | Notification type    |
-| message   | String           | Notification message |
-| isRead    | Boolean          | Default: false       |
-| createdAt | DateTime         | Timestamp            |
-
-### Indexes
-
-* userId + isRead
-* createdAt
+| Field | Type |
+|---|---|
+| id | String (UUID) |
+| userId | String (FK → User) |
+| refreshToken | String |
+| expiresAt | DateTime |
+| revokedAt | DateTime? (nullable) |
 
 ---
 
-## 🔐 Session Model
+## 6. 🔄 Authentication Flow
 
-| Field        | Type          | Description        |
-| ------------ | ------------- | ------------------ |
-| id           | String (UUID) | Primary key        |
-| userId       | String        | Related user       |
-| refreshToken | String        | Auth refresh token |
-| expiresAt    | DateTime      | Expiry time        |
-| revokedAt    | DateTime?     | Revoked timestamp  |
-| createdAt    | DateTime      | Created timestamp  |
+TaskFlow uses a dual-token strategy: short-lived JWT access tokens and longer-lived refresh tokens stored in the Session table. Redis blacklists tokens on logout.
 
-### Indexes
+1. 📝 Register → hash password → create User record
+2. 🔑 Login → validate credentials → generate Access Token + Refresh Token
+3. 💾 Store Refresh Token → persist Session record in DB
+4. 🛡️ API Requests → verify Access Token via middleware
+5. 🔁 Token Refresh → validate Refresh Token → rotate and issue new pair
+6. 🚪 Logout → blacklist Access Token in Redis → revoke Session in DB
 
-* userId
-* expiresAt
-* refreshToken
+### 6.1 🔑 Login Request Example
 
----
- 
----
- 
-# 📋 Core Functionalities
- 
-| Feature                | Status |
-| ---------------------- | ------ |
-| 🔐 Authentication      | ✅      |
-| 📋 Task CRUD           | ✅      |
-| 👤 User Dashboard      | ✅      |
-| 🚧 Protected Routes    | ✅      |
-| 📱 Responsive UI       | ✅      |
-| ⚠️ Error Handling      | ✅      |
-| 📦 Reusable Components | ✅      |
- 
----
- 
-# 🌐 API Routes
- 
-## 🔐 Auth Routes
- 
-```http
-POST /auth/register
+```json
 POST /auth/login
-POST /auth/logout
+{
+  "email": "user@gmail.com",
+  "password": "password123"
+}
 ```
- 
+
 ---
- 
-## 📋 Task Routes
- 
-```http
-GET    /tasks
-GET    /tasks/:id
-POST   /tasks
-PUT    /tasks/:id
-DELETE /tasks/:id
+
+## 7. 🌐 API Catalog
+
+### 7.1 🔐 Authentication APIs
+
+| Method | Endpoint | Auth Required | Purpose |
+|---|---|---|---|
+| `POST` | /auth/register | No | Register new user |
+| `POST` | /auth/login | No | Login and get tokens |
+| `POST` | /auth/refresh | Yes | Rotate refresh token |
+| `POST` | /auth/logout | Yes | Logout and blacklist token |
+
+### 7.2 ✅ Task APIs
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `GET` | /tasks | List all tasks for user |
+| `POST` | /tasks | Create a new task |
+| `PATCH` | /tasks/:id | Update an existing task |
+| `DELETE` | /tasks/:id | Soft-delete a task |
+
+### 7.3 🤝 Share Task APIs
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `POST` | /tasks/:id/share | Share a task with another user |
+| `GET` | /tasks/shared-with-me | Get tasks shared with me (supports query filters) |
+| `GET` | /tasks/shared-with-me/categories | Get categories of tasks shared with me |
+
+### 7.4 🔔 Notification APIs
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `GET` | /notifications | Fetch all user notifications |
+| `PATCH` | /notifications/:id/read | Mark a specific notification as read |
+
+### 7.5 📊 Dashboard APIs
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `GET` | /dashboard/stats | Get aggregated task statistics |
+
+---
+
+## 8. 🟥 Redis
+
+### 8.1 🎯 Purpose
+
+Redis is used exclusively for token blacklisting. When a user logs out, the current access token is stored in Redis with a TTL matching the token's remaining expiry. Any subsequent request bearing that token is rejected immediately without hitting the database.
+
+| Benefit | Detail |
+|---|---|
+| ⚡ Fast lookups | O(1) key access, sub-millisecond response |
+| ⏱️ TTL support | Tokens auto-expire — no manual cleanup needed |
+| 🚫 Immediate invalidation | Logout takes effect instantly across all requests |
+
+### 8.2 💻 Installation
+
+**🪟 Windows**
+
+```powershell
+net start Memurai
+redis-cli ping    # expected: PONG
 ```
- 
----
- 
-# 🔑 Environment Variables
- 
-Create a `.env` file in backend root.
- 
-```env
-PORT=5000
 
-DATABASE_URL=your_database_url
+**🐧 Linux**
 
-JWT_SECRET_KEY=your_secret_key
-
-CLIENT_URL=http://localhost:5173
-```
- 
----
- 
-# 🚀 Installation
- 
-## 📥 Clone Repository
- 
 ```bash
-git clone https://github.com/het-sudo/TaskFlow.git
+sudo apt update && sudo apt install redis-server
+redis-server
+redis-cli ping    # expected: PONG
 ```
- 
----
- 
-## 🖥️ Backend Setup
- 
-```bash
-cd backend
 
+**🍎 macOS**
+
+```bash
+brew install redis
+brew services start redis
+redis-cli ping    # expected: PONG
+```
+
+### 8.3 🔍 Inspecting Blacklisted Tokens
+
+```bash
+redis-cli
+keys *
+ttl blacklist:<token>
+get blacklist:<token>
+```
+
+### 8.4 ⚠️ Failure Scenarios
+
+| Scenario | Impact | Mitigation |
+|---|---|---|
+| Redis down at logout | Token blacklisting unavailable | Fall back to DB-backed blacklist |
+| Redis down at request | Blacklist check skipped | Circuit breaker + alerting |
+
+---
+
+## 9. 🚀 Setup Guide
+
+### 9.1 ✅ Prerequisites
+
+- 🐘 PostgreSQL installed and running
+- 🟥 Redis installed and running
+- 🟢 Node.js + pnpm installed
+
+### 9.2 🌍 Environment Variables
+
+| Variable | Purpose | Required |
+|---|---|---|
+| `DATABASE_URL` | PostgreSQL connection string | ✅ Yes |
+| `JWT_SECRET` | Access token signing secret | ✅ Yes |
+| `JWT_REFRESH_SECRET` | Refresh token signing secret | ✅ Yes |
+| `REDIS_URL` | Redis connection URL | ✅ Yes |
+| `PORT` | Backend server port | ✅ Yes |
+| `CLIENT_URL` | Frontend origin (CORS) | ✅ Yes |
+
+### 9.3 ⚙️ Backend Setup
+
+```bash
+cd server
 pnpm install
-
+npx prisma generate
+npx prisma migrate dev
 pnpm dev
 ```
- 
----
- 
-## 🎨 Frontend Setup
- 
-```bash
-cd frontend
 
+### 9.4 🎨 Frontend Setup
+
+```bash
+cd client
 pnpm install
+pnpm dev
+```
 
-pnpm dev
-```
- 
----
- 
-# 📜 Scripts
- 
-## 🖥️ Backend
- 
-```bash
-pnpm dev
-pnpm build
-```
- 
----
- 
-## 🎨 Frontend
- 
-```bash
-pnpm dev
-pnpm build
-pnpm preview
-```
- 
----
- 
-# 🛡️ Security Features
- 
- *🔒 Password hashing*
- 🔑 JWT verification
- *🚧 Protected APIs*
- 👮 Authorization middleware
- *📋 Request validation*
- ⚠️ Centralized error handling
- 
----
- 
-# ⚠️ Error Handling
- 
-The application includes:
- 
- *📌 Standardized API responses*
- ❌ Validation handling
- *⚠️ Centralized error middleware*
- ✅ Proper HTTP status codes
- 
----
- 
-# 🚀 Future Improvements
- 
- *📅 Due dates & reminders*
- 👥 Team collaboration
- *📊 Analytics dashboard*
- 🏷️ Task labels & priorities
- *🔔 Notifications*
- 🌙 Dark mode support
- 
----
- 
-# 🌿 Git Workflow
- 
-This project follows:
- 
- *🌱 Feature branch workflow*
- ✍️ Meaningful commits
- *🔀 Pull request-based development*
- 
----
- 
-# 📚 Learning Outcomes
- 
-This project helped practice:
- 
- 🏗️ Scalable architecture
- *🔐 Authentication systems*
- 📋 CRUD operations
- *⚛️ React + TypeScript development*
- 🛢️ Database integration
-* 🛡️ Secure backend development
- 
----
- 
-# 👨‍💻 Author
- 
-Developed by **Het** 🚀
- 
 ---
 
+## 10. 🔒 Security
+
+### 10.1 ✅ Implemented
+
+| Feature | Detail |
+|---|---|
+| 🔒 bcrypt password hashing | All passwords hashed before storage |
+| 🔑 JWT authentication | Short-lived access tokens |
+| 🔁 Refresh token rotation | New token pair issued on each refresh |
+| 🚫 Session revocation | DB-level session can be force-revoked |
+| 🛡️ Zod validation | All inputs validated at API boundary |
+| 🚧 Protected routes | Middleware guards all authenticated endpoints |
+| 🟥 Redis token blacklist | Immediate logout enforcement |
+
+### 10.2 ⚠️ Recommended (Not Yet Implemented)
+
+| Feature | Priority | Effort |
+|---|---|---|
+| ⏱️ Rate limiting | High | Low |
+| 🛡️ CSRF protection | High | Medium |
+| 📋 Audit logs | Medium | Medium |
+| 📡 Monitoring & alerting | High | Medium |
+
+---
+
+## 11. 💡 Notable Engineering Decisions
+
+### 11.1 🔁 JWT + Refresh Token Rotation
+
+Short-lived access tokens (minutes) limit the window of a stolen token. Refresh token rotation means each use issues a new pair, and the old refresh token is immediately invalidated — detecting replay attacks.
+
+### 11.2 🟥 Redis Token Blacklist
+
+Rather than keeping session state purely in the DB, logout tokens are written to Redis with a TTL. This gives O(1) blacklist checks without touching PostgreSQL on every authenticated request.
+
+### 11.3 🔺 Prisma ORM
+
+Prisma provides type-safe database access with auto-generated TypeScript types, declarative schema migrations, and strong IDE support — reducing runtime query errors significantly.
+
+### 11.4 🎨 Feature-Based Frontend Architecture
+
+Organising code by feature domain (auth, task, shared, dashboard, notification) rather than by technical layer keeps each feature self-contained, making the codebase easier to scale and onboard into.
+
+### 11.5 📦 Module-Based Backend Architecture
+
+Grouping controllers, services, routes, and validators by domain module (auth, task, notification, dashboard) keeps related code co-located, reducing cross-folder jumps and making each module independently maintainable.
+
+### 11.6 🗑️ Soft Delete Pattern
+
+Tasks are never hard-deleted from the database. A `deletedAt` timestamp is set instead, allowing potential restore functionality, audit history, and safer cascades without complex foreign-key cleanup.
+
+---
+
+## 12. 🗺️ Future Roadmap
+
+| Enhancement | Priority | Effort | Impact |
+|---|---|---|---|
+| ⏱️ Rate Limiting | High | Low | High |
+| 🧪 Unit Testing | High | Medium | High |
+| 🔗 Integration Testing | High | Medium | High |
+| 🔄 CI/CD Pipeline | High | Medium | High |
+| 📡 Monitoring | Medium | Low | High |
+| 📋 Audit Logs | Medium | Medium | Medium |
+| 👥 RBAC | Medium | Medium | High |
+| 📨 Redis Pub/Sub | Low | High | Medium |
+| 🏛️ Microservices | Low | High | Medium |
+
+---
+
+## 13. 🔬 Technical Deep Dive
+
+### 🔒 Security
+- Refresh token rotation with replay detection
+- Redis blacklisting for immediate logout enforcement
+- bcrypt password hashing
+- Session revocation at the DB level
+
+### 🏗️ Architecture
+- Feature-based React frontend with Zustand state management
+- Module-based backend with co-located controllers, services, routes, and validators
+- Soft delete pattern for safe data management
+- Type-safe end-to-end with TypeScript + Prisma + Zod
+
+### ⚡ Real-Time
+- Socket.IO for live notifications
+- Task sharing events pushed to recipients in real time
+
+### 📈 Scalability Considerations
+- PostgreSQL with Prisma migrations for schema evolution
+- Redis for fast stateless token checks
+- Stateless JWT design supports horizontal API scaling
