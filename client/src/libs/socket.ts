@@ -7,7 +7,8 @@ let socket: Socket | null = null
 export function connectSocket(token: string) {
   if (!token) return null
 
-  // if socket already exists, just update auth and reconnect if needed
+  // if socket already exists
+  // , just update auth and reconnect if needed
   if (socket) {
     socket.auth = { token }
     if (!socket.connected) socket.connect()

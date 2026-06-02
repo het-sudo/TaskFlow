@@ -61,7 +61,7 @@ export default function EditTaskForm({ taskId, tasks }: Props) {
     })
 
     if (ok) {
-      navigate("/tasks")
+      navigate("/tasks", { replace: true })
     }
   }
 
@@ -188,7 +188,7 @@ export default function EditTaskForm({ taskId, tasks }: Props) {
               loading={isSubmitting}
               onClick={async () => {
                 const ok = await deleteTask(taskId)
-                if (ok) navigate("/tasks")
+                if (ok) navigate("/tasks", { replace: true })
               }}
             >
               Yes, Delete

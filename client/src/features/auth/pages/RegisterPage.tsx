@@ -9,9 +9,19 @@ import { useAuth } from "../useAuth"
 
 import { Lock, Mail, User } from "lucide-react"
 
-export function RegisterPage() {
-  const { register: registerUser } = useAuth()
+interface RegisterPageProps {
+  setMode: React.Dispatch<React.SetStateAction<"login" | "register">>
+}
 
+export function RegisterPage({ setMode }: RegisterPageProps) {
+  const { register: registerUser } = useAuth()
+  const onSubmit = async (data: RegisterInput) => {
+    const success = await registerUser(data)
+
+    if (success) {
+      setMode("login")
+    }
+  }
   const {
     register,
 
@@ -32,7 +42,7 @@ export function RegisterPage() {
         </p>
       </div>
 
-      <form className="space-y-5" onSubmit={handleSubmit(registerUser)}>
+      <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
         <Input
           label="Full Name"
           placeholder="Enter your Full Name"

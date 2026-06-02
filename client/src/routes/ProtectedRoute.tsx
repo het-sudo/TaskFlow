@@ -3,8 +3,6 @@ import { Navigate, Outlet } from "react-router-dom"
 import { useAuthStore } from "@/features/auth/auth.store"
 import { AppLoader } from "@/shared/AppLoader"
 
-import { ROUTES } from "@/shared/constants"
-
 //protecting route from unauthenticate access
 
 export function ProtectedRoute() {
@@ -17,7 +15,7 @@ export function ProtectedRoute() {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to={ROUTES.INITIAL} replace />
+    return <Navigate to={"/"} replace />
   }
 
   return <Outlet />

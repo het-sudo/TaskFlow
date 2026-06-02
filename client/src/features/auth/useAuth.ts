@@ -9,7 +9,6 @@ import {
 import { useAuthStore } from "./auth.store"
 import type { LoginInput, RegisterInput } from "./auth.schema"
 
-import { ROUTES } from "@/shared/constants"
 import {
   setAccessToken,
   removeAccessToken,
@@ -70,7 +69,7 @@ export function useAuth() {
 
       toast.success("Login successful")
 
-      navigate(ROUTES.DASHBOARD)
+      navigate("/dashboard", { replace: true })
     } catch (error) {
       const message = getErrorMessage(error)
       toast.error("Error in login api: " + message)
@@ -83,8 +82,8 @@ export function useAuth() {
       await registerRequest(data)
 
       toast.success("Account created")
-
-      navigate(ROUTES.LOGIN)
+      navigate("/", { replace: true })
+      return true
     } catch (error) {
       const message = getErrorMessage(error)
       toast.error("Error in register api: " + message)
@@ -100,7 +99,7 @@ export function useAuth() {
       clearUser()
       removeAccessToken()
       disconnectSocket()
-      navigate(ROUTES.INITIAL)
+      navigate("/", { replace: true })
     }
   }
 

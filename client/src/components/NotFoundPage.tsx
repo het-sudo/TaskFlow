@@ -1,4 +1,3 @@
-import { ROUTES } from "@/shared/constants"
 import { Link } from "react-router-dom"
 
 export default function NotFoundPage() {
@@ -15,7 +14,7 @@ export default function NotFoundPage() {
       </p>
 
       <Link
-        to={ROUTES.INITIAL}
+        to={"/"}
         className="
           mt-8 rounded-xl bg-red-400 px-6 py-3
           font-medium text-white transition-all

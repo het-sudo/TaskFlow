@@ -93,7 +93,11 @@ export default function AuthPage() {
           </div>
 
           <div className="rounded-3xl border bg-white p-8 shadow-sm">
-            {mode === "login" ? <LoginPage /> : <RegisterPage />}
+            {mode === "login" ? (
+              <LoginPage />
+            ) : (
+              <RegisterPage setMode={setMode} />
+            )}
           </div>
         </div>
       </div>

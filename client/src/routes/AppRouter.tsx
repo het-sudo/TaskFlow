@@ -2,7 +2,6 @@ import { Route, Routes } from "react-router-dom"
 import { ProtectedRoute } from "./ProtectedRoute"
 import { AppLayout } from "@/shared/AppLayout"
 
-import { ROUTES } from "@/shared/constants"
 import NotFoundPage from "@/components/NotFoundPage"
 import TaskDetail from "@/features/task/pages/TaskDetail"
 import SharedTasksPage from "@/features/shareTask/pages/ShareTaskPage"
@@ -14,11 +13,11 @@ import AuthPage from "@/features/auth/pages/AuthPage"
 export function AppRouter() {
   return (
     <Routes>
-      <Route path={ROUTES.INITIAL} element={<AuthPage />} />
+      <Route path={"/"} element={<AuthPage />} />
 
       <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>
-          <Route path={ROUTES.DASHBOARD} element={<DashboardPage />} />
+          <Route path={"/dashboard"} element={<DashboardPage />} />
 
           <Route path="/tasks" element={<TaskPage />} />
 
