@@ -16,7 +16,7 @@ export function connectSocket(token: string) {
 
   // initialize new socket connection
   socket = io(
-    import.meta.env.VITE_SOCKET_URL || "https://taskflow-ix78.onrender.com",
+    import.meta.env.VITE_SOCKET_URL || "https://taskflow-npgs.onrender.com",
     {
       autoConnect: true,
       auth: { token },
