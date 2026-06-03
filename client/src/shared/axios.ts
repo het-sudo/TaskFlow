@@ -17,8 +17,7 @@ let refreshPromise: Promise<string> | null = null
 
 export const api = axios.create({
   baseURL:
-    import.meta.env.VITE_SOCKET_URL ||
-    "https://taskflow-ix78.onrender.com/api/v1",
+    import.meta.env.VITE_API_URL || "https://taskflow-ix78.onrender.com/api/v1",
   withCredentials: true,
 })
 
