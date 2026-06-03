@@ -1,5 +1,5 @@
 // Server root URL (no /api/v1). Use the same value for REST + Socket.IO.
-const DEFAULT_SERVER = "http://localhost:9000"
+const DEFAULT_SERVER = "https://taskflow-ix78.onrender.com"
 
 export function getServerUrl(): string {
   const url = import.meta.env.VITE_API_URL || DEFAULT_SERVER
