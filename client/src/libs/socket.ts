@@ -1,5 +1,4 @@
 import { io, Socket } from "socket.io-client"
-import { getServerUrl } from "@/shared/apiConfig"
 
 let socket: Socket | null = null
 
@@ -16,12 +15,15 @@ export function connectSocket(token: string) {
   }
 
   // initialize new socket connection
-  socket = io(getServerUrl(), {
-    autoConnect: true,
-    auth: { token },
-    transports: ["websocket"], // force websocket for real-time reliability
-    withCredentials: true,
-  })
+  socket = io(
+    import.meta.env.VITE_SOCKET_URL || "https://taskflow-ix78.onrender.com",
+    {
+      autoConnect: true,
+      auth: { token },
+      transports: ["websocket"], // force websocket for real-time reliability
+      withCredentials: true,
+    }
+  )
 
   return socket
 }

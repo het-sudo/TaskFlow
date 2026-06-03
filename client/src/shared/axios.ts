@@ -4,11 +4,11 @@ import axios, {
   type AxiosResponse,
 } from "axios"
 
-import { getApiBaseUrl } from "./apiConfig"
 import { getAccessToken, removeAccessToken, setAccessToken } from "./token"
 import { reconnectSocket } from "@/libs/socket"
 
 import { refreshRequest } from "@/features/auth/auth.api"
+
 type RetryConfig = InternalAxiosRequestConfig & {
   _retry?: boolean
 }
@@ -16,7 +16,9 @@ type RetryConfig = InternalAxiosRequestConfig & {
 let refreshPromise: Promise<string> | null = null
 
 export const api = axios.create({
-  baseURL: getApiBaseUrl(),
+  baseURL:
+    import.meta.env.VITE_SOCKET_URL ||
+    "https://taskflow-ix78.onrender.com/api/v1",
   withCredentials: true,
 })
 

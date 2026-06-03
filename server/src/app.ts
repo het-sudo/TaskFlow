@@ -6,7 +6,12 @@ import rootRouter from "./routes/index.js"
 
 const app: Express = express()
 
-app.use(cors({ origin: process.env.ORIGIN, credentials: true }))
+app.use(
+  cors({
+    origin: process.env.ORIGIN || "https://task-flow-1s6v.vercel.app",
+    credentials: true,
+  })
+)
 app.use(express.json())
 app.use(cookieParser())
 app.use("/api/v1", rootRouter)
