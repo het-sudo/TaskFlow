@@ -18,8 +18,11 @@ export const validate =
   (schemas: ValidationSchemas) =>
   (req: Request, res: Response, next: NextFunction): void => {
     try {
-      req.validated = {}
-
+      req.validated = {
+        body: undefined,
+        query: undefined,
+        params: undefined,
+      }
       if (schemas.body) {
         req.validated.body = schemas.body.parse(req.body)
       }

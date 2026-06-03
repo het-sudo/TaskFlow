@@ -10,5 +10,5 @@
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*", "src/types/**/*.d.ts"]
+  "include": ["src"]
 }
