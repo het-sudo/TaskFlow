@@ -15,7 +15,7 @@ export function connectSocket(token: string) {
   }
 
   // initialize new socket connection
-  socket = io(import.meta.env.VITE_SOCKET_URL || "http://localhost:9000/", {
+  socket = io(import.meta.env.VITE_SOCKET_URL || "http://13.203.215.191/", {
     autoConnect: true,
     auth: { token },
     transports: ["websocket"], // force websocket for real-time reliability
