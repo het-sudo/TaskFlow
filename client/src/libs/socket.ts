@@ -15,15 +15,12 @@ export function connectSocket(token: string) {
   }
 
   // initialize new socket connection
-  socket = io(
-    import.meta.env.VITE_SOCKET_URL || "https://taskflow-npgs.onrender.com",
-    {
-      autoConnect: true,
-      auth: { token },
-      transports: ["websocket"], // force websocket for real-time reliability
-      withCredentials: true,
-    }
-  )
+  socket = io(import.meta.env.VITE_SOCKET_URL || "http://localhost:9000/", {
+    autoConnect: true,
+    auth: { token },
+    transports: ["websocket"], // force websocket for real-time reliability
+    withCredentials: true,
+  })
 
   return socket
 }

@@ -8,7 +8,7 @@ const app: Express = express()
 
 app.use(
   cors({
-    origin: process.env.ORIGIN || "https://task-flow-1s6v.vercel.app",
+    origin: process.env.ORIGIN || "http://localhost:4173/",
     credentials: true,
   })
 )
