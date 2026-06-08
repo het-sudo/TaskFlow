@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response, type Express } from "express"
+import express, { type Express } from "express"
 import cors from "cors"
 import errorHandler from "./middleware/error.middleware.js"
 import cookieParser from "cookie-parser"
@@ -16,10 +16,7 @@ app.use(express.json())
 app.get("/", (req, res) => {
   res.json({ ok: true })
 })
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error(err)
-  res.status(500).json({ message: err.message })
-})
+
 app.use(cookieParser())
 app.use("/api/v1", rootRouter)
 app.use(errorHandler)
